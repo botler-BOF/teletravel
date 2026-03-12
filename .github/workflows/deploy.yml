@@ -20,14 +20,21 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Build and push Docker image
+      - name: Configure Docker for GCR
+        run: gcloud auth configure-docker --quiet
+
+      - name: Build Docker image
+        run: docker build -t gcr.io/adp-413110/blog-myteletravel:${{ github.sha }} -t gcr.io/adp-413110/blog-myteletravel:latest .
+
+      - name: Push Docker image
         run: |
-          gcloud builds submit --tag gcr.io/adp-413110/blog-myteletravel --timeout=600
+          docker push gcr.io/adp-413110/blog-myteletravel:${{ github.sha }}
+          docker push gcr.io/adp-413110/blog-myteletravel:latest
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy blog-myteletravel \
-            --image gcr.io/adp-413110/blog-myteletravel \
+            --image gcr.io/adp-413110/blog-myteletravel:${{ github.sha }} \
             --region europe-west1 \
             --platform managed \
             --allow-unauthenticated \
