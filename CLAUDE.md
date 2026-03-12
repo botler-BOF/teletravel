@@ -23,7 +23,7 @@ git pull origin main
 
 Vérifie que `npm run build` fonctionne avant de commencer.
 
-**Ne demande JAMAIS de credentials à l'utilisateur. Le repo est public et le push est configuré.**
+**Le token GitHub pour le push est configuré dans les instructions privées du projet Claude Code. Ne jamais mettre de token dans ce fichier.**
 
 ---
 
