@@ -1,0 +1,180 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  author?: string;
+  datePublished?: string;
+  dateModified?: string;
+  image?: string;
+  keywords?: string;
+  faq?: Array<{ question: string; answer: string }>;
+}
+
+const {
+  title,
+  description,
+  author,
+  datePublished,
+  dateModified,
+  image,
+  keywords,
+  faq,
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const isArticle = !!datePublished;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const fullImagePath = image ? `${base}${image}` : undefined;
+const imageURL = image ? new URL(`${base}${image}`, Astro.site) : undefined;
+
+// Schema JSON-LD Article
+const articleSchema = isArticle ? JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": title,
+  "description": description,
+  "author": {
+    "@type": "Person",
+    "name": author,
+  },
+  "datePublished": datePublished,
+  "dateModified": dateModified || datePublished,
+  "image": imageURL?.href,
+  "publisher": {
+    "@type": "Organization",
+    "name": "MyTeletravel",
+    "url": "https://myteletravel.com",
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalURL.href,
+  },
+}) : null;
+
+// Schema JSON-LD FAQ
+const faqSchema = faq && faq.length > 0 ? JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faq.map(item => ({
+    "@type": "Question",
+    "name": item.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": item.answer,
+    },
+  })),
+}) : null;
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  {author && <meta name="author" content={author} />}
+  {keywords && <meta name="keywords" content={keywords} />}
+  <link rel="canonical" href={canonicalURL.href} />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content={isArticle ? "article" : "website"} />
+  <meta property="og:url" content={canonicalURL.href} />
+  {imageURL && <meta property="og:image" content={imageURL.href} />}
+
+  <!-- JSON-LD Article -->
+  {articleSchema && <script type="application/ld+json" set:html={articleSchema} />}
+
+  <!-- JSON-LD FAQ -->
+  {faqSchema && <script type="application/ld+json" set:html={faqSchema} />}
+</head>
+<body>
+  <Header />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+</body>
+</html>
+
+<style is:global>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    line-height: 1.7;
+    color: #1a1a2e;
+    background: #fafafa;
+  }
+
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+    line-height: 1.3;
+    margin-bottom: 1.5rem;
+    color: #0f0f23;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: #16213e;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #1a1a40;
+  }
+
+  p {
+    margin-bottom: 1.2rem;
+    color: #333;
+  }
+
+  a {
+    color: #0066cc;
+    text-decoration: underline;
+  }
+
+  a:hover {
+    color: #004499;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  #faq {
+    background: #f0f4ff;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-top: 3rem;
+  }
+
+  #faq h2 {
+    margin-top: 0;
+  }
+
+  #faq h3 {
+    color: #0066cc;
+  }
+</style>

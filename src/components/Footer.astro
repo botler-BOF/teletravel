@@ -1,0 +1,33 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <div class="footer-content">
+    <p>&copy; {year} <a href="https://myteletravel.com">MyTeletravel</a> — Tous droits réservés.</p>
+  </div>
+</footer>
+
+<style>
+  footer {
+    background: #0f0f23;
+    color: #999;
+    padding: 2rem;
+    margin-top: 4rem;
+    text-align: center;
+  }
+
+  .footer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  a {
+    color: #4dabf7;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+</style>

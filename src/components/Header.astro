@@ -1,0 +1,56 @@
+---
+const base = import.meta.env.BASE_URL;
+---
+
+<header>
+  <nav>
+    <a href={base} class="logo">MyTeletravel <span>Blog</span></a>
+    <div class="nav-links">
+      <a href={base}>Articles</a>
+      <a href="https://myteletravel.com">Retour au site</a>
+    </div>
+  </nav>
+</header>
+
+<style>
+  header {
+    background: #0f0f23;
+    color: white;
+    padding: 1rem 2rem;
+  }
+
+  nav {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+  }
+
+  .logo span {
+    color: #4dabf7;
+    font-weight: 400;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .nav-links a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+
+  .nav-links a:hover {
+    color: white;
+  }
+</style>

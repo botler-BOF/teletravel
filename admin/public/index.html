@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyTeletravel — Admin Blog</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+    }
+
+    /* --- NAV --- */
+    .topbar {
+      background: #0f0f23;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .topbar h1 { font-size: 1.3rem; }
+    .topbar h1 span { color: #4dabf7; font-weight: 400; }
+    .topbar nav a {
+      color: #aaa;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .topbar nav a:hover, .topbar nav a.active { color: white; }
+
+    /* --- LAYOUT --- */
+    .container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
+
+    /* --- TABS --- */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* --- CARDS --- */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 1.5rem;
+    }
+    .card h2 { margin-bottom: 1.5rem; color: #0f0f23; }
+
+    /* --- FORM --- */
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      margin-top: 1.2rem;
+      font-size: 0.9rem;
+      color: #333;
+    }
+    label:first-child { margin-top: 0; }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #4dabf7;
+    }
+    textarea { resize: vertical; min-height: 100px; }
+
+    .char-count {
+      font-size: 0.8rem;
+      color: #999;
+      text-align: right;
+      margin-top: 0.2rem;
+    }
+    .char-count.over { color: #e03131; font-weight: 600; }
+
+    .hint {
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 0.2rem;
+    }
+
+    /* --- FAQ --- */
+    .faq-block {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+    }
+    .faq-block .faq-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 0.5rem;
+      align-items: start;
+      margin-bottom: 0.5rem;
+    }
+    .faq-block .faq-item input { font-size: 0.85rem; padding: 0.5rem; }
+    .remove-faq {
+      background: #e03131;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      margin-top: 0;
+    }
+    .add-faq {
+      background: none;
+      border: 1.5px dashed #4dabf7;
+      color: #4dabf7;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    /* --- SECTIONS --- */
+    .section-block {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 0.8rem;
+    }
+    .section-item { margin-bottom: 1rem; }
+    .section-item:last-child { margin-bottom: 0; }
+
+    /* --- BUTTONS --- */
+    .btn {
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #228be6;
+      color: white;
+    }
+    .btn-primary:hover { background: #1c7ed6; }
+    .btn-primary:disabled {
+      background: #adb5bd;
+      cursor: not-allowed;
+    }
+    .btn-danger {
+      background: #e03131;
+      color: white;
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    .actions { margin-top: 2rem; display: flex; gap: 1rem; align-items: center; }
+
+    /* --- IMAGE UPLOAD --- */
+    .image-upload {
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      margin-top: 0.5rem;
+    }
+    .image-upload:hover { border-color: #4dabf7; }
+    .image-upload.has-image { border-style: solid; border-color: #51cf66; }
+    .image-upload input[type="file"] { display: none; }
+    .image-preview { max-width: 300px; margin-top: 0.5rem; border-radius: 6px; }
+
+    /* --- ARTICLE LIST --- */
+    .article-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    .article-row:last-child { border: none; }
+    .article-info h3 { font-size: 1rem; margin-bottom: 0.2rem; }
+    .article-info p { font-size: 0.85rem; color: #888; }
+
+    /* --- TOAST --- */
+    .toast {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      color: white;
+      font-weight: 500;
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+      max-width: 400px;
+    }
+    .toast.success { background: #2f9e44; }
+    .toast.error { background: #e03131; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* --- LOADING --- */
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* --- EMPTY STATE --- */
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: #adb5bd;
+    }
+    .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>MyTeletravel <span>Blog Admin</span></h1>
+  <nav>
+    <a onclick="showView('list')" id="nav-list" class="active">Articles</a>
+    <a onclick="showView('create')" id="nav-create">Nouvel article</a>
+  </nav>
+</div>
+
+<div class="container">
+
+  <!-- ==================== ARTICLE LIST ==================== -->
+  <div id="view-list" class="view active">
+    <div class="card">
+      <h2>Articles publiés</h2>
+      <div id="articles-list">
+        <div class="empty">
+          <div class="empty-icon">&#128221;</div>
+          Chargement...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CREATE ARTICLE ==================== -->
+  <div id="view-create" class="view">
+    <form id="article-form" class="card">
+      <h2>Publier un nouvel article</h2>
+
+      <!-- TITLE -->
+      <label for="title">Titre de l'article *</label>
+      <input type="text" id="title" placeholder="Ex : Comment organiser un voyage sur mesure en 2026" required>
+      <div class="hint">Incluez le mot-clé principal dans le titre (50-60 caractères idéal)</div>
+
+      <!-- DESCRIPTION -->
+      <label for="description">Description SEO *</label>
+      <textarea id="description" rows="2" maxlength="155" placeholder="Description courte pour Google (155 caractères max)" required></textarea>
+      <div class="char-count" id="desc-count">0 / 155</div>
+
+      <!-- AUTHOR -->
+      <label for="author">Auteur *</label>
+      <input type="text" id="author" placeholder="Prénom Nom" required>
+
+      <!-- KEYWORDS -->
+      <label for="keywords">Mots-clés SEO *</label>
+      <input type="text" id="keywords" placeholder="voyage sur mesure, tourisme, destinations 2026">
+      <div class="hint">Séparés par des virgules</div>
+
+      <!-- IMAGE -->
+      <label>Image principale</label>
+      <div class="image-upload" id="image-drop" onclick="document.getElementById('image-file').click()">
+        <input type="file" id="image-file" accept="image/*">
+        <span id="image-label">Cliquez ou glissez une image ici</span>
+        <img id="image-preview" class="image-preview" style="display:none">
+      </div>
+      <input type="hidden" id="image-path">
+      <input type="text" id="image-alt" placeholder="Description de l'image (texte alternatif)" style="margin-top:0.5rem">
+
+      <!-- INTRO -->
+      <label for="intro">Introduction *</label>
+      <textarea id="intro" rows="3" placeholder="Paragraphe d'introduction de l'article (2-3 phrases)" required></textarea>
+
+      <!-- SECTIONS -->
+      <label>Sections de l'article *</label>
+      <div class="hint">Les titres (H2) doivent être des questions : Comment... ? / Pourquoi... ? / Quel... ?</div>
+      <div class="section-block" id="sections">
+        <div class="section-item" data-index="0">
+          <input type="text" class="section-heading" placeholder="H2 : Comment organiser son voyage ?" style="margin-bottom:0.5rem">
+          <textarea class="section-content" rows="4" placeholder="Contenu de cette section (2-3 paragraphes)"></textarea>
+        </div>
+        <div class="section-item" data-index="1">
+          <input type="text" class="section-heading" placeholder="H2 : Pourquoi choisir un spécialiste ?" style="margin-bottom:0.5rem">
+          <textarea class="section-content" rows="4" placeholder="Contenu de cette section"></textarea>
+        </div>
+        <div class="section-item" data-index="2">
+          <input type="text" class="section-heading" placeholder="H2 : Quel budget prévoir ?" style="margin-bottom:0.5rem">
+          <textarea class="section-content" rows="4" placeholder="Contenu de cette section"></textarea>
+        </div>
+      </div>
+      <button type="button" class="add-faq" onclick="addSection()">+ Ajouter une section</button>
+
+      <!-- FAQ -->
+      <label>FAQ (5 questions minimum) *</label>
+      <div class="hint">Questions fréquentes affichées en bas de l'article — améliorent le SEO</div>
+      <div class="faq-block" id="faq-list">
+        <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 1"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
+        <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 2"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
+        <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 3"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
+        <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 4"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
+        <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 5"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
+      </div>
+      <button type="button" class="add-faq" onclick="addFaq()">+ Ajouter une question</button>
+
+      <!-- SUBMIT -->
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" id="submit-btn">Publier l'article</button>
+        <span id="status-text"></span>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<script>
+  // --- Navigation ---
+  function showView(name) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.topbar nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById('view-' + name).classList.add('active');
+    document.getElementById('nav-' + name).classList.add('active');
+    if (name === 'list') loadArticles();
+  }
+
+  // --- Toast ---
+  function toast(msg, type) {
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+
+  // --- Description counter ---
+  document.getElementById('description').addEventListener('input', function() {
+    const count = this.value.length;
+    const el = document.getElementById('desc-count');
+    el.textContent = count + ' / 155';
+    el.className = count > 155 ? 'char-count over' : 'char-count';
+  });
+
+  // --- FAQ ---
+  function addFaq() {
+    const n = document.querySelectorAll('.faq-item').length + 1;
+    const div = document.createElement('div');
+    div.className = 'faq-item';
+    div.innerHTML = `<input type="text" class="faq-q" placeholder="Question ${n}"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button>`;
+    document.getElementById('faq-list').appendChild(div);
+  }
+
+  function removeFaq(btn) {
+    if (document.querySelectorAll('.faq-item').length > 5) {
+      btn.parentElement.remove();
+    } else {
+      toast('Minimum 5 questions FAQ obligatoires', 'error');
+    }
+  }
+
+  // --- Sections ---
+  function addSection() {
+    const n = document.querySelectorAll('.section-item').length;
+    const div = document.createElement('div');
+    div.className = 'section-item';
+    div.dataset.index = n;
+    div.innerHTML = `<input type="text" class="section-heading" placeholder="H2 : Comment/Pourquoi/Quel... ?" style="margin-bottom:0.5rem"><textarea class="section-content" rows="4" placeholder="Contenu de cette section"></textarea>`;
+    document.getElementById('sections').appendChild(div);
+  }
+
+  // --- Image Upload ---
+  document.getElementById('image-file').addEventListener('change', async function() {
+    const file = this.files[0];
+    if (!file) return;
+
+    // Preview
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('image-preview').src = e.target.result;
+      document.getElementById('image-preview').style.display = 'block';
+      document.getElementById('image-label').textContent = file.name;
+      document.getElementById('image-drop').classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
+
+    // Upload
+    const fd = new FormData();
+    fd.append('image', file);
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      document.getElementById('image-path').value = data.path;
+    } catch(e) {
+      toast('Erreur upload image', 'error');
+    }
+  });
+
+  // --- Load articles ---
+  async function loadArticles() {
+    try {
+      const res = await fetch('/api/articles');
+      const articles = await res.json();
+      const list = document.getElementById('articles-list');
+
+      if (articles.length === 0) {
+        list.innerHTML = '<div class="empty"><div class="empty-icon">&#128196;</div>Aucun article publié.<br>Cliquez sur "Nouvel article" pour commencer.</div>';
+        return;
+      }
+
+      list.innerHTML = articles.map(a => `
+        <div class="article-row">
+          <div class="article-info">
+            <h3>${a.title}</h3>
+            <p>${a.author} — ${new Date(a.datePublished).toLocaleDateString('fr-FR', { year:'numeric', month:'long', day:'numeric' })}</p>
+          </div>
+          <div>
+            <a href="/blog/${a.slug}/" target="_blank" class="btn" style="background:#e9ecef;color:#333;padding:0.4rem 1rem;font-size:0.85rem;text-decoration:none;margin-right:0.5rem">Voir</a>
+            <button class="btn btn-danger" onclick="deleteArticle('${a.slug}', '${a.title.replace(/'/g, "\\'")}')">Supprimer</button>
+          </div>
+        </div>
+      `).join('');
+    } catch(e) {
+      document.getElementById('articles-list').innerHTML = '<div class="empty">Erreur de chargement.</div>';
+    }
+  }
+
+  // --- Delete article ---
+  async function deleteArticle(slug, title) {
+    if (!confirm(`Supprimer l'article "${title}" ?`)) return;
+    try {
+      const res = await fetch('/api/articles/' + slug, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        toast('Article supprimé', 'success');
+        loadArticles();
+      } else {
+        toast(data.error, 'error');
+      }
+    } catch(e) {
+      toast('Erreur lors de la suppression', 'error');
+    }
+  }
+
+  // --- Submit form ---
+  document.getElementById('article-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('submit-btn');
+    const statusText = document.getElementById('status-text');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Publication en cours...';
+    statusText.textContent = 'Construction du site en cours, veuillez patienter...';
+
+    // Collect sections
+    const sections = [];
+    document.querySelectorAll('.section-item').forEach(item => {
+      const heading = item.querySelector('.section-heading').value.trim();
+      const content = item.querySelector('.section-content').value.trim();
+      if (heading && content) sections.push({ heading, content });
+    });
+
+    // Collect FAQ
+    const faq = [];
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const q = item.querySelector('.faq-q').value.trim();
+      const a = item.querySelector('.faq-a').value.trim();
+      if (q && a) faq.push({ question: q, answer: a });
+    });
+
+    const body = {
+      title: document.getElementById('title').value.trim(),
+      description: document.getElementById('description').value.trim(),
+      author: document.getElementById('author').value.trim(),
+      keywords: document.getElementById('keywords').value.trim(),
+      image: document.getElementById('image-path').value,
+      imageAlt: document.getElementById('image-alt').value.trim(),
+      intro: document.getElementById('intro').value.trim(),
+      sections,
+      faq,
+    };
+
+    try {
+      const res = await fetch('/api/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        toast(data.message, 'success');
+        document.getElementById('article-form').reset();
+        document.getElementById('image-preview').style.display = 'none';
+        document.getElementById('image-drop').classList.remove('has-image');
+        document.getElementById('image-label').textContent = 'Cliquez ou glissez une image ici';
+        document.getElementById('desc-count').textContent = '0 / 155';
+        statusText.textContent = '';
+        showView('list');
+      } else {
+        toast(data.error, 'error');
+      }
+    } catch(e) {
+      toast('Erreur de connexion au serveur', 'error');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Publier l\'article';
+    statusText.textContent = '';
+  });
+
+  // --- Init ---
+  loadArticles();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+---
+import BlogLayout from '../layouts/BlogLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+
+const articles = (await getCollection('blog')).sort(
+  (a, b) => new Date(b.data.datePublished).getTime() - new Date(a.data.datePublished).getTime()
+);
+---
+
+<BlogLayout
+  title="Blog MyTeletravel — Conseils voyage et tourisme"
+  description="Retrouvez nos articles, conseils et guides pour organiser vos voyages sur mesure. Destinations, astuces et tendances du tourisme."
+>
+  <h1>Blog MyTeletravel</h1>
+  <p class="intro">Conseils, guides et inspirations pour vos voyages sur mesure.</p>
+
+  <div class="articles-grid">
+    {articles.map((article) => (
+      <ArticleCard
+        title={article.data.title}
+        description={article.data.description}
+        slug={article.id}
+        datePublished={article.data.datePublished}
+        author={article.data.author}
+        image={article.data.image}
+      />
+    ))}
+  </div>
+</BlogLayout>
+
+<style>
+  .intro {
+    font-size: 1.15rem;
+    color: #666;
+    margin-bottom: 2.5rem;
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2rem;
+  }
+</style>
