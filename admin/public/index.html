@@ -6,349 +6,291 @@
   <title>MyTeletravel — Admin Blog</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f0f2f5;
-      color: #1a1a2e;
-    }
-
-    /* --- NAV --- */
-    .topbar {
-      background: #0f0f23;
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    /* --- TOPBAR --- */
+    .topbar { background: #0f0f23; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
     .topbar h1 { font-size: 1.3rem; }
     .topbar h1 span { color: #4dabf7; font-weight: 400; }
-    .topbar nav a {
-      color: #aaa;
-      text-decoration: none;
-      margin-left: 1.5rem;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
+    .topbar nav a { color: #aaa; text-decoration: none; margin-left: 1.5rem; font-size: 0.95rem; cursor: pointer; }
     .topbar nav a:hover, .topbar nav a.active { color: white; }
+    .topbar .logout { color: #ff6b6b; cursor: pointer; margin-left: 1.5rem; font-size: 0.85rem; }
 
-    /* --- LAYOUT --- */
     .container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
-
-    /* --- TABS --- */
     .view { display: none; }
     .view.active { display: block; }
 
+    /* --- LOGIN --- */
+    .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 80vh; }
+    .login-box { background: white; padding: 3rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; width: 380px; }
+    .login-box h2 { margin-bottom: 0.5rem; }
+    .login-box p { color: #888; margin-bottom: 2rem; font-size: 0.9rem; }
+    .login-box input { width: 100%; padding: 0.8rem 1rem; border: 1.5px solid #ddd; border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; text-align: center; }
+    .login-box input:focus { outline: none; border-color: #4dabf7; }
+    .login-error { color: #e03131; font-size: 0.85rem; margin-bottom: 1rem; display: none; }
+
     /* --- CARDS --- */
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      margin-bottom: 1.5rem;
-    }
+    .card { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 1.5rem; }
     .card h2 { margin-bottom: 1.5rem; color: #0f0f23; }
 
     /* --- FORM --- */
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.3rem;
-      margin-top: 1.2rem;
-      font-size: 0.9rem;
-      color: #333;
-    }
+    label { display: block; font-weight: 600; margin: 1.2rem 0 0.3rem; font-size: 0.9rem; color: #333; }
     label:first-child { margin-top: 0; }
-
-    input[type="text"], textarea, select {
-      width: 100%;
-      padding: 0.7rem 1rem;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-family: inherit;
-      transition: border-color 0.2s;
-    }
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: #4dabf7;
-    }
+    input[type="text"], textarea { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid #ddd; border-radius: 8px; font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s; }
+    input:focus, textarea:focus { outline: none; border-color: #4dabf7; }
     textarea { resize: vertical; min-height: 100px; }
-
-    .char-count {
-      font-size: 0.8rem;
-      color: #999;
-      text-align: right;
-      margin-top: 0.2rem;
-    }
+    .char-count { font-size: 0.8rem; color: #999; text-align: right; margin-top: 0.2rem; }
     .char-count.over { color: #e03131; font-weight: 600; }
+    .hint { font-size: 0.8rem; color: #888; margin-top: 0.2rem; }
 
-    .hint {
-      font-size: 0.8rem;
-      color: #888;
-      margin-top: 0.2rem;
-    }
-
-    /* --- FAQ --- */
-    .faq-block {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-top: 0.8rem;
-    }
-    .faq-block .faq-item {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 0.5rem;
-      align-items: start;
-      margin-bottom: 0.5rem;
-    }
-    .faq-block .faq-item input { font-size: 0.85rem; padding: 0.5rem; }
-    .remove-faq {
-      background: #e03131;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      width: 32px;
-      height: 32px;
-      cursor: pointer;
-      font-size: 1.1rem;
-      margin-top: 0;
-    }
-    .add-faq {
-      background: none;
-      border: 1.5px dashed #4dabf7;
-      color: #4dabf7;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
-    }
+    /* --- IMAGES --- */
+    .images-zone { border: 2px dashed #dee2e6; border-radius: 8px; padding: 1.5rem; text-align: center; cursor: pointer; transition: border-color 0.2s; margin-top: 0.5rem; }
+    .images-zone:hover { border-color: #4dabf7; }
+    .images-zone.dragover { border-color: #228be6; background: #e7f5ff; }
+    .images-zone input[type="file"] { display: none; }
+    .images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.8rem; margin-top: 1rem; }
+    .img-thumb { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #f1f3f5; }
+    .img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .img-thumb .remove-img { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 0.8rem; }
+    .img-thumb .img-path { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; font-size: 0.65rem; padding: 2px 4px; word-break: break-all; }
+    .img-thumb.main-img { border: 3px solid #228be6; }
+    .set-main { position: absolute; bottom: 20px; left: 4px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; font-size: 0.6rem; padding: 2px 6px; cursor: pointer; }
+    .set-main.is-main { background: #228be6; }
 
     /* --- SECTIONS --- */
-    .section-block {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-top: 0.8rem;
-    }
-    .section-item { margin-bottom: 1rem; }
+    .section-block, .faq-block { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 1rem; margin-top: 0.8rem; }
+    .section-item { margin-bottom: 1rem; position: relative; }
     .section-item:last-child { margin-bottom: 0; }
+    .section-img-select { font-size: 0.85rem; margin-top: 0.3rem; padding: 0.4rem; border-radius: 6px; border: 1px solid #ddd; width: 100%; }
+
+    .faq-item { display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; align-items: start; margin-bottom: 0.5rem; }
+    .faq-item input { font-size: 0.85rem; padding: 0.5rem; }
+    .remove-faq, .remove-section { background: #e03131; color: white; border: none; border-radius: 6px; width: 32px; height: 32px; cursor: pointer; font-size: 1.1rem; }
+    .remove-section { position: absolute; top: 0; right: 0; width: 28px; height: 28px; font-size: 0.9rem; }
+    .add-btn { background: none; border: 1.5px dashed #4dabf7; color: #4dabf7; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem; margin-top: 0.5rem; }
 
     /* --- BUTTONS --- */
-    .btn {
-      padding: 0.8rem 2rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-primary {
-      background: #228be6;
-      color: white;
-    }
+    .btn { padding: 0.8rem 2rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: #228be6; color: white; }
     .btn-primary:hover { background: #1c7ed6; }
-    .btn-primary:disabled {
-      background: #adb5bd;
-      cursor: not-allowed;
-    }
-    .btn-danger {
-      background: #e03131;
-      color: white;
-      padding: 0.4rem 1rem;
-      font-size: 0.85rem;
-    }
-
+    .btn-primary:disabled { background: #adb5bd; cursor: not-allowed; }
+    .btn-danger { background: #e03131; color: white; padding: 0.4rem 1rem; font-size: 0.85rem; }
     .actions { margin-top: 2rem; display: flex; gap: 1rem; align-items: center; }
 
-    /* --- IMAGE UPLOAD --- */
-    .image-upload {
-      border: 2px dashed #dee2e6;
-      border-radius: 8px;
-      padding: 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s;
-      margin-top: 0.5rem;
-    }
-    .image-upload:hover { border-color: #4dabf7; }
-    .image-upload.has-image { border-style: solid; border-color: #51cf66; }
-    .image-upload input[type="file"] { display: none; }
-    .image-preview { max-width: 300px; margin-top: 0.5rem; border-radius: 6px; }
-
     /* --- ARTICLE LIST --- */
-    .article-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 0;
-      border-bottom: 1px solid #eee;
-    }
+    .article-row { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid #eee; }
     .article-row:last-child { border: none; }
     .article-info h3 { font-size: 1rem; margin-bottom: 0.2rem; }
     .article-info p { font-size: 0.85rem; color: #888; }
 
-    /* --- TOAST --- */
-    .toast {
-      position: fixed;
-      top: 1.5rem;
-      right: 1.5rem;
-      padding: 1rem 1.5rem;
-      border-radius: 10px;
-      color: white;
-      font-weight: 500;
-      z-index: 1000;
-      animation: slideIn 0.3s ease;
-      max-width: 400px;
-    }
+    .toast { position: fixed; top: 1.5rem; right: 1.5rem; padding: 1rem 1.5rem; border-radius: 10px; color: white; font-weight: 500; z-index: 1000; animation: slideIn 0.3s ease; max-width: 400px; }
     .toast.success { background: #2f9e44; }
     .toast.error { background: #e03131; }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    /* --- LOADING --- */
-    .spinner {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 2.5px solid #fff;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-      vertical-align: middle;
-      margin-right: 0.5rem;
-    }
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2.5px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 0.5rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* --- EMPTY STATE --- */
-    .empty {
-      text-align: center;
-      padding: 3rem;
-      color: #adb5bd;
-    }
+    .empty { text-align: center; padding: 3rem; color: #adb5bd; }
     .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
   </style>
 </head>
 <body>
 
-<div class="topbar">
-  <h1>MyTeletravel <span>Blog Admin</span></h1>
-  <nav>
-    <a onclick="showView('list')" id="nav-list" class="active">Articles</a>
-    <a onclick="showView('create')" id="nav-create">Nouvel article</a>
-  </nav>
-</div>
-
-<div class="container">
-
-  <!-- ==================== ARTICLE LIST ==================== -->
-  <div id="view-list" class="view active">
-    <div class="card">
-      <h2>Articles publiés</h2>
-      <div id="articles-list">
-        <div class="empty">
-          <div class="empty-icon">&#128221;</div>
-          Chargement...
-        </div>
-      </div>
+<!-- ==================== LOGIN ==================== -->
+<div id="login-screen">
+  <div class="topbar">
+    <h1>MyTeletravel <span>Blog Admin</span></h1>
+  </div>
+  <div class="login-wrapper">
+    <div class="login-box">
+      <h2>Connexion</h2>
+      <p>Entrez le mot de passe admin pour accéder au tableau de bord.</p>
+      <div class="login-error" id="login-error">Mot de passe incorrect</div>
+      <input type="password" id="login-password" placeholder="Mot de passe" autofocus>
+      <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Se connecter</button>
     </div>
   </div>
+</div>
 
-  <!-- ==================== CREATE ARTICLE ==================== -->
-  <div id="view-create" class="view">
-    <form id="article-form" class="card">
-      <h2>Publier un nouvel article</h2>
-
-      <!-- TITLE -->
-      <label for="title">Titre de l'article *</label>
-      <input type="text" id="title" placeholder="Ex : Comment organiser un voyage sur mesure en 2026" required>
-      <div class="hint">Incluez le mot-clé principal dans le titre (50-60 caractères idéal)</div>
-
-      <!-- DESCRIPTION -->
-      <label for="description">Description SEO *</label>
-      <textarea id="description" rows="2" maxlength="155" placeholder="Description courte pour Google (155 caractères max)" required></textarea>
-      <div class="char-count" id="desc-count">0 / 155</div>
-
-      <!-- AUTHOR -->
-      <label for="author">Auteur *</label>
-      <input type="text" id="author" placeholder="Prénom Nom" required>
-
-      <!-- KEYWORDS -->
-      <label for="keywords">Mots-clés SEO *</label>
-      <input type="text" id="keywords" placeholder="voyage sur mesure, tourisme, destinations 2026">
-      <div class="hint">Séparés par des virgules</div>
-
-      <!-- IMAGE -->
-      <label>Image principale</label>
-      <div class="image-upload" id="image-drop" onclick="document.getElementById('image-file').click()">
-        <input type="file" id="image-file" accept="image/*">
-        <span id="image-label">Cliquez ou glissez une image ici</span>
-        <img id="image-preview" class="image-preview" style="display:none">
-      </div>
-      <input type="hidden" id="image-path">
-      <input type="text" id="image-alt" placeholder="Description de l'image (texte alternatif)" style="margin-top:0.5rem">
-
-      <!-- INTRO -->
-      <label for="intro">Introduction *</label>
-      <textarea id="intro" rows="3" placeholder="Paragraphe d'introduction de l'article (2-3 phrases)" required></textarea>
-
-      <!-- SECTIONS -->
-      <label>Sections de l'article *</label>
-      <div class="hint">Les titres (H2) doivent être des questions : Comment... ? / Pourquoi... ? / Quel... ?</div>
-      <div class="section-block" id="sections">
-        <div class="section-item" data-index="0">
-          <input type="text" class="section-heading" placeholder="H2 : Comment organiser son voyage ?" style="margin-bottom:0.5rem">
-          <textarea class="section-content" rows="4" placeholder="Contenu de cette section (2-3 paragraphes)"></textarea>
-        </div>
-        <div class="section-item" data-index="1">
-          <input type="text" class="section-heading" placeholder="H2 : Pourquoi choisir un spécialiste ?" style="margin-bottom:0.5rem">
-          <textarea class="section-content" rows="4" placeholder="Contenu de cette section"></textarea>
-        </div>
-        <div class="section-item" data-index="2">
-          <input type="text" class="section-heading" placeholder="H2 : Quel budget prévoir ?" style="margin-bottom:0.5rem">
-          <textarea class="section-content" rows="4" placeholder="Contenu de cette section"></textarea>
-        </div>
-      </div>
-      <button type="button" class="add-faq" onclick="addSection()">+ Ajouter une section</button>
-
-      <!-- FAQ -->
-      <label>FAQ (5 questions minimum) *</label>
-      <div class="hint">Questions fréquentes affichées en bas de l'article — améliorent le SEO</div>
-      <div class="faq-block" id="faq-list">
-        <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 1"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
-        <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 2"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
-        <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 3"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
-        <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 4"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
-        <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 5"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
-      </div>
-      <button type="button" class="add-faq" onclick="addFaq()">+ Ajouter une question</button>
-
-      <!-- SUBMIT -->
-      <div class="actions">
-        <button type="submit" class="btn btn-primary" id="submit-btn">Publier l'article</button>
-        <span id="status-text"></span>
-      </div>
-    </form>
+<!-- ==================== MAIN APP ==================== -->
+<div id="app-screen" style="display:none">
+  <div class="topbar">
+    <h1>MyTeletravel <span>Blog Admin</span></h1>
+    <nav>
+      <a onclick="showView('list')" id="nav-list" class="active">Articles</a>
+      <a onclick="showView('images')" id="nav-images">Images</a>
+      <a onclick="showView('create')" id="nav-create">Nouvel article</a>
+      <a class="logout" onclick="doLogout()">Deconnexion</a>
+    </nav>
   </div>
 
+  <div class="container">
+
+    <!-- ARTICLE LIST -->
+    <div id="view-list" class="view active">
+      <div class="card">
+        <h2>Articles publies</h2>
+        <div id="articles-list"><div class="empty"><div class="empty-icon">&#128221;</div>Chargement...</div></div>
+      </div>
+    </div>
+
+    <!-- IMAGE GALLERY -->
+    <div id="view-images" class="view">
+      <div class="card">
+        <h2>Bibliotheque d'images</h2>
+        <div class="images-zone" id="gallery-drop" onclick="document.getElementById('gallery-files').click()">
+          <input type="file" id="gallery-files" accept="image/*" multiple>
+          <p>Cliquez ou glissez des images ici pour les uploader</p>
+        </div>
+        <div class="images-grid" id="gallery-grid"></div>
+      </div>
+    </div>
+
+    <!-- CREATE ARTICLE -->
+    <div id="view-create" class="view">
+      <form id="article-form" class="card">
+        <h2>Publier un nouvel article</h2>
+
+        <label for="title">Titre de l'article *</label>
+        <input type="text" id="title" placeholder="Ex : Comment organiser un voyage sur mesure en 2026" required>
+        <div class="hint">Incluez le mot-cle principal (50-60 caracteres ideal)</div>
+
+        <label for="description">Description SEO *</label>
+        <textarea id="description" rows="2" maxlength="155" placeholder="Description courte pour Google (155 caracteres max)" required></textarea>
+        <div class="char-count" id="desc-count">0 / 155</div>
+
+        <label for="author">Auteur * (Prenom Nom)</label>
+        <input type="text" id="author" placeholder="Marie Dupont" required>
+
+        <label for="keywords">Mots-cles SEO *</label>
+        <input type="text" id="keywords" placeholder="voyage sur mesure, tourisme, destinations 2026">
+        <div class="hint">Separes par des virgules</div>
+
+        <!-- IMAGES -->
+        <label>Images de l'article</label>
+        <div class="hint">Uploadez plusieurs images. La premiere sera l'image principale (hero). Vous pourrez assigner les autres aux sections.</div>
+        <div class="images-zone" id="article-img-drop" onclick="document.getElementById('article-img-files').click()">
+          <input type="file" id="article-img-files" accept="image/*" multiple>
+          <p>Cliquez ou glissez vos images ici (max 20)</p>
+        </div>
+        <div class="images-grid" id="article-img-grid"></div>
+        <input type="hidden" id="main-image-path">
+        <label for="image-alt">Texte alternatif de l'image principale</label>
+        <input type="text" id="image-alt" placeholder="Description de l'image pour le SEO">
+
+        <!-- INTRO -->
+        <label for="intro">Introduction *</label>
+        <textarea id="intro" rows="3" placeholder="Paragraphe d'introduction (2-3 phrases avec le mot-cle)" required></textarea>
+
+        <!-- SECTIONS -->
+        <label>Sections de l'article *</label>
+        <div class="hint">H2 en questions : Comment... ? / Pourquoi... ? / Quel... ?</div>
+        <div class="section-block" id="sections">
+          <div class="section-item" data-index="0">
+            <button type="button" class="remove-section" onclick="removeSection(this)">&times;</button>
+            <input type="text" class="section-heading" placeholder="H2 : Comment organiser son voyage ?" style="margin-bottom:0.5rem">
+            <textarea class="section-content" rows="4" placeholder="Contenu de cette section (2-3 paragraphes)"></textarea>
+            <select class="section-img-select"><option value="">-- Pas d'image pour cette section --</option></select>
+          </div>
+          <div class="section-item" data-index="1">
+            <button type="button" class="remove-section" onclick="removeSection(this)">&times;</button>
+            <input type="text" class="section-heading" placeholder="H2 : Pourquoi choisir un specialiste ?" style="margin-bottom:0.5rem">
+            <textarea class="section-content" rows="4" placeholder="Contenu de cette section"></textarea>
+            <select class="section-img-select"><option value="">-- Pas d'image pour cette section --</option></select>
+          </div>
+          <div class="section-item" data-index="2">
+            <button type="button" class="remove-section" onclick="removeSection(this)">&times;</button>
+            <input type="text" class="section-heading" placeholder="H2 : Quel budget prevoir ?" style="margin-bottom:0.5rem">
+            <textarea class="section-content" rows="4" placeholder="Contenu de cette section"></textarea>
+            <select class="section-img-select"><option value="">-- Pas d'image pour cette section --</option></select>
+          </div>
+        </div>
+        <button type="button" class="add-btn" onclick="addSection()">+ Ajouter une section</button>
+
+        <!-- FAQ -->
+        <label>FAQ (5 questions minimum) *</label>
+        <div class="faq-block" id="faq-list">
+          <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 1"><input type="text" class="faq-a" placeholder="Reponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
+          <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 2"><input type="text" class="faq-a" placeholder="Reponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
+          <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 3"><input type="text" class="faq-a" placeholder="Reponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
+          <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 4"><input type="text" class="faq-a" placeholder="Reponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
+          <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 5"><input type="text" class="faq-a" placeholder="Reponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
+        </div>
+        <button type="button" class="add-btn" onclick="addFaq()">+ Ajouter une question</button>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary" id="submit-btn">Publier l'article</button>
+          <span id="status-text"></span>
+        </div>
+      </form>
+    </div>
+
+  </div>
 </div>
 
 <script>
+  let authToken = localStorage.getItem('blog_admin_token');
+  const uploadedImages = [];
+
+  // --- Auth ---
+  function api(method, url, body) {
+    const opts = { method, headers: { 'Authorization': 'Bearer ' + authToken } };
+    if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+    return fetch(url, opts);
+  }
+
+  async function doLogin() {
+    const pw = document.getElementById('login-password').value;
+    const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
+    const data = await res.json();
+    if (data.token) {
+      authToken = data.token;
+      localStorage.setItem('blog_admin_token', authToken);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+      loadArticles();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+    }
+  }
+
+  document.getElementById('login-password').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
+
+  function doLogout() {
+    authToken = null;
+    localStorage.removeItem('blog_admin_token');
+    document.getElementById('app-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'block';
+    document.getElementById('login-password').value = '';
+    document.getElementById('login-error').style.display = 'none';
+  }
+
+  // Check saved session
+  async function checkSession() {
+    if (!authToken) return;
+    const res = await api('GET', '/api/articles');
+    if (res.ok) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+      loadArticles();
+    } else {
+      localStorage.removeItem('blog_admin_token');
+      authToken = null;
+    }
+  }
+  checkSession();
+
   // --- Navigation ---
   function showView(name) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.topbar nav a').forEach(a => a.classList.remove('active'));
+    document.querySelectorAll('.topbar nav a:not(.logout)').forEach(a => a.classList.remove('active'));
     document.getElementById('view-' + name).classList.add('active');
     document.getElementById('nav-' + name).classList.add('active');
     if (name === 'list') loadArticles();
+    if (name === 'images') loadGallery();
   }
 
-  // --- Toast ---
   function toast(msg, type) {
     const el = document.createElement('div');
     el.className = 'toast ' + type;
@@ -359,27 +301,109 @@
 
   // --- Description counter ---
   document.getElementById('description').addEventListener('input', function() {
-    const count = this.value.length;
     const el = document.getElementById('desc-count');
-    el.textContent = count + ' / 155';
-    el.className = count > 155 ? 'char-count over' : 'char-count';
+    el.textContent = this.value.length + ' / 155';
+    el.className = this.value.length > 155 ? 'char-count over' : 'char-count';
   });
 
-  // --- FAQ ---
-  function addFaq() {
-    const n = document.querySelectorAll('.faq-item').length + 1;
-    const div = document.createElement('div');
-    div.className = 'faq-item';
-    div.innerHTML = `<input type="text" class="faq-q" placeholder="Question ${n}"><input type="text" class="faq-a" placeholder="Réponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button>`;
-    document.getElementById('faq-list').appendChild(div);
+  // --- Image Upload (article) ---
+  const articleImgDrop = document.getElementById('article-img-drop');
+  const articleImgFiles = document.getElementById('article-img-files');
+
+  articleImgDrop.addEventListener('dragover', e => { e.preventDefault(); articleImgDrop.classList.add('dragover'); });
+  articleImgDrop.addEventListener('dragleave', () => articleImgDrop.classList.remove('dragover'));
+  articleImgDrop.addEventListener('drop', e => {
+    e.preventDefault();
+    articleImgDrop.classList.remove('dragover');
+    uploadArticleImages(e.dataTransfer.files);
+  });
+  articleImgFiles.addEventListener('change', () => uploadArticleImages(articleImgFiles.files));
+
+  async function uploadArticleImages(files) {
+    const fd = new FormData();
+    for (const f of files) fd.append('images', f);
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + authToken }, body: fd });
+      const data = await res.json();
+      if (data.files) {
+        data.files.forEach(f => uploadedImages.push(f));
+        renderArticleImages();
+        if (!document.getElementById('main-image-path').value && uploadedImages.length > 0) {
+          document.getElementById('main-image-path').value = uploadedImages[0].path;
+        }
+      }
+    } catch(e) { toast('Erreur upload', 'error'); }
   }
 
-  function removeFaq(btn) {
-    if (document.querySelectorAll('.faq-item').length > 5) {
-      btn.parentElement.remove();
-    } else {
-      toast('Minimum 5 questions FAQ obligatoires', 'error');
+  function renderArticleImages() {
+    const grid = document.getElementById('article-img-grid');
+    const mainPath = document.getElementById('main-image-path').value;
+    grid.innerHTML = uploadedImages.map((img, i) => `
+      <div class="img-thumb ${img.path === mainPath ? 'main-img' : ''}">
+        <img src="/blog${img.path}" alt="${img.name}">
+        <button class="remove-img" onclick="removeArticleImage(${i})">&times;</button>
+        <button class="set-main ${img.path === mainPath ? 'is-main' : ''}" onclick="setMainImage(${i})">${img.path === mainPath ? 'Principale' : 'Definir principale'}</button>
+        <div class="img-path">${img.path}</div>
+      </div>
+    `).join('');
+    updateSectionImageSelects();
+  }
+
+  function removeArticleImage(i) {
+    const removed = uploadedImages.splice(i, 1)[0];
+    if (document.getElementById('main-image-path').value === removed.path) {
+      document.getElementById('main-image-path').value = uploadedImages.length > 0 ? uploadedImages[0].path : '';
     }
+    renderArticleImages();
+  }
+
+  function setMainImage(i) {
+    document.getElementById('main-image-path').value = uploadedImages[i].path;
+    renderArticleImages();
+  }
+
+  function updateSectionImageSelects() {
+    document.querySelectorAll('.section-img-select').forEach(sel => {
+      const current = sel.value;
+      sel.innerHTML = '<option value="">-- Pas d\'image pour cette section --</option>' +
+        uploadedImages.map(img => `<option value="${img.path}" ${img.path === current ? 'selected' : ''}>${img.name}</option>`).join('');
+    });
+  }
+
+  // --- Gallery ---
+  const galleryDrop = document.getElementById('gallery-drop');
+  const galleryFiles = document.getElementById('gallery-files');
+
+  galleryDrop.addEventListener('dragover', e => { e.preventDefault(); galleryDrop.classList.add('dragover'); });
+  galleryDrop.addEventListener('dragleave', () => galleryDrop.classList.remove('dragover'));
+  galleryDrop.addEventListener('drop', e => {
+    e.preventDefault();
+    galleryDrop.classList.remove('dragover');
+    uploadGalleryImages(e.dataTransfer.files);
+  });
+  galleryFiles.addEventListener('change', () => uploadGalleryImages(galleryFiles.files));
+
+  async function uploadGalleryImages(files) {
+    const fd = new FormData();
+    for (const f of files) fd.append('images', f);
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + authToken }, body: fd });
+      const data = await res.json();
+      if (data.files) { toast(data.files.length + ' image(s) uploadee(s)', 'success'); loadGallery(); }
+    } catch(e) { toast('Erreur upload', 'error'); }
+  }
+
+  async function loadGallery() {
+    const res = await api('GET', '/api/images');
+    const images = await res.json();
+    const grid = document.getElementById('gallery-grid');
+    if (images.length === 0) { grid.innerHTML = '<div class="empty">Aucune image.</div>'; return; }
+    grid.innerHTML = images.map(img => `
+      <div class="img-thumb">
+        <img src="/blog${img.path}" alt="${img.name}">
+        <div class="img-path">${img.path}</div>
+      </div>
+    `).join('');
   }
 
   // --- Sections ---
@@ -387,55 +411,46 @@
     const n = document.querySelectorAll('.section-item').length;
     const div = document.createElement('div');
     div.className = 'section-item';
-    div.dataset.index = n;
-    div.innerHTML = `<input type="text" class="section-heading" placeholder="H2 : Comment/Pourquoi/Quel... ?" style="margin-bottom:0.5rem"><textarea class="section-content" rows="4" placeholder="Contenu de cette section"></textarea>`;
+    div.innerHTML = `<button type="button" class="remove-section" onclick="removeSection(this)">&times;</button>
+      <input type="text" class="section-heading" placeholder="H2 : Comment/Pourquoi/Quel... ?" style="margin-bottom:0.5rem">
+      <textarea class="section-content" rows="4" placeholder="Contenu de cette section"></textarea>
+      <select class="section-img-select"><option value="">-- Pas d'image pour cette section --</option></select>`;
     document.getElementById('sections').appendChild(div);
+    updateSectionImageSelects();
   }
 
-  // --- Image Upload ---
-  document.getElementById('image-file').addEventListener('change', async function() {
-    const file = this.files[0];
-    if (!file) return;
+  function removeSection(btn) {
+    if (document.querySelectorAll('.section-item').length > 1) btn.closest('.section-item').remove();
+    else toast('Il faut au moins une section', 'error');
+  }
 
-    // Preview
-    const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById('image-preview').src = e.target.result;
-      document.getElementById('image-preview').style.display = 'block';
-      document.getElementById('image-label').textContent = file.name;
-      document.getElementById('image-drop').classList.add('has-image');
-    };
-    reader.readAsDataURL(file);
+  // --- FAQ ---
+  function addFaq() {
+    const n = document.querySelectorAll('.faq-item').length + 1;
+    const div = document.createElement('div');
+    div.className = 'faq-item';
+    div.innerHTML = `<input type="text" class="faq-q" placeholder="Question ${n}"><input type="text" class="faq-a" placeholder="Reponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button>`;
+    document.getElementById('faq-list').appendChild(div);
+  }
 
-    // Upload
-    const fd = new FormData();
-    fd.append('image', file);
-    try {
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      document.getElementById('image-path').value = data.path;
-    } catch(e) {
-      toast('Erreur upload image', 'error');
-    }
-  });
+  function removeFaq(btn) {
+    if (document.querySelectorAll('.faq-item').length > 5) btn.parentElement.remove();
+    else toast('Minimum 5 questions FAQ', 'error');
+  }
 
   // --- Load articles ---
   async function loadArticles() {
     try {
-      const res = await fetch('/api/articles');
+      const res = await api('GET', '/api/articles');
+      if (!res.ok) { doLogout(); return; }
       const articles = await res.json();
       const list = document.getElementById('articles-list');
-
-      if (articles.length === 0) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">&#128196;</div>Aucun article publié.<br>Cliquez sur "Nouvel article" pour commencer.</div>';
-        return;
-      }
-
+      if (articles.length === 0) { list.innerHTML = '<div class="empty"><div class="empty-icon">&#128196;</div>Aucun article.<br>Cliquez sur "Nouvel article".</div>'; return; }
       list.innerHTML = articles.map(a => `
         <div class="article-row">
           <div class="article-info">
             <h3>${a.title}</h3>
-            <p>${a.author} — ${new Date(a.datePublished).toLocaleDateString('fr-FR', { year:'numeric', month:'long', day:'numeric' })}</p>
+            <p>${a.author} - ${new Date(a.datePublished).toLocaleDateString('fr-FR', { year:'numeric', month:'long', day:'numeric' })}</p>
           </div>
           <div>
             <a href="/blog/${a.slug}/" target="_blank" class="btn" style="background:#e9ecef;color:#333;padding:0.4rem 1rem;font-size:0.85rem;text-decoration:none;margin-right:0.5rem">Voir</a>
@@ -443,47 +458,35 @@
           </div>
         </div>
       `).join('');
-    } catch(e) {
-      document.getElementById('articles-list').innerHTML = '<div class="empty">Erreur de chargement.</div>';
-    }
+    } catch(e) { document.getElementById('articles-list').innerHTML = '<div class="empty">Erreur de chargement.</div>'; }
   }
 
-  // --- Delete article ---
   async function deleteArticle(slug, title) {
-    if (!confirm(`Supprimer l'article "${title}" ?`)) return;
-    try {
-      const res = await fetch('/api/articles/' + slug, { method: 'DELETE' });
-      const data = await res.json();
-      if (data.success) {
-        toast('Article supprimé', 'success');
-        loadArticles();
-      } else {
-        toast(data.error, 'error');
-      }
-    } catch(e) {
-      toast('Erreur lors de la suppression', 'error');
-    }
+    if (!confirm('Supprimer "' + title + '" ?')) return;
+    const res = await api('DELETE', '/api/articles/' + slug);
+    const data = await res.json();
+    if (data.success) { toast('Article supprime', 'success'); loadArticles(); }
+    else toast(data.error, 'error');
   }
 
-  // --- Submit form ---
+  // --- Submit ---
   document.getElementById('article-form').addEventListener('submit', async function(e) {
     e.preventDefault();
-
     const btn = document.getElementById('submit-btn');
     const statusText = document.getElementById('status-text');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Publication en cours...';
-    statusText.textContent = 'Construction du site en cours, veuillez patienter...';
+    btn.innerHTML = '<span class="spinner"></span>Publication...';
+    statusText.textContent = 'Build en cours...';
 
-    // Collect sections
     const sections = [];
     document.querySelectorAll('.section-item').forEach(item => {
       const heading = item.querySelector('.section-heading').value.trim();
       const content = item.querySelector('.section-content').value.trim();
-      if (heading && content) sections.push({ heading, content });
+      const image = item.querySelector('.section-img-select')?.value || '';
+      const imageAlt = heading;
+      if (heading && content) sections.push({ heading, content, image, imageAlt });
     });
 
-    // Collect FAQ
     const faq = [];
     document.querySelectorAll('.faq-item').forEach(item => {
       const q = item.querySelector('.faq-q').value.trim();
@@ -496,44 +499,30 @@
       description: document.getElementById('description').value.trim(),
       author: document.getElementById('author').value.trim(),
       keywords: document.getElementById('keywords').value.trim(),
-      image: document.getElementById('image-path').value,
+      image: document.getElementById('main-image-path').value,
       imageAlt: document.getElementById('image-alt').value.trim(),
       intro: document.getElementById('intro').value.trim(),
-      sections,
-      faq,
+      sections, faq,
     };
 
     try {
-      const res = await fetch('/api/articles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
+      const res = await api('POST', '/api/articles', body);
       const data = await res.json();
-
       if (data.success) {
         toast(data.message, 'success');
         document.getElementById('article-form').reset();
-        document.getElementById('image-preview').style.display = 'none';
-        document.getElementById('image-drop').classList.remove('has-image');
-        document.getElementById('image-label').textContent = 'Cliquez ou glissez une image ici';
+        uploadedImages.length = 0;
+        renderArticleImages();
         document.getElementById('desc-count').textContent = '0 / 155';
         statusText.textContent = '';
         showView('list');
-      } else {
-        toast(data.error, 'error');
-      }
-    } catch(e) {
-      toast('Erreur de connexion au serveur', 'error');
-    }
+      } else { toast(data.error, 'error'); }
+    } catch(e) { toast('Erreur de connexion', 'error'); }
 
     btn.disabled = false;
     btn.textContent = 'Publier l\'article';
     statusText.textContent = '';
   });
-
-  // --- Init ---
-  loadArticles();
 </script>
 
 </body>
