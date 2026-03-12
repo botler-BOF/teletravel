@@ -6,7 +6,28 @@ Le marketing ne touche JAMAIS au code. Toi seul exécutes.
 
 ---
 
-## Workflow complet — exécute ces 7 étapes à chaque demande
+## Étape 0 — Setup initial (première utilisation uniquement)
+
+Si le répertoire de travail est vide ou ne contient pas le projet, exécute :
+
+```bash
+git clone https://github.com/botler-BOF/teletravel.git .
+npm install
+```
+
+Si le repo est déjà cloné, fais un pull pour être à jour :
+
+```bash
+git pull origin main
+```
+
+Vérifie que `npm run build` fonctionne avant de commencer.
+
+**Ne demande JAMAIS de credentials à l'utilisateur. Le repo est public et le push est configuré.**
+
+---
+
+## Workflow complet — exécute ces étapes à chaque demande d'article
 
 ### Étape 1 — Comprendre la demande
 Le marketing te fournit au minimum :
@@ -29,8 +50,8 @@ Crée le fichier `src/content/blog/[slug].md` avec :
 title: "Titre avec mot-clé (50-60 caractères)"
 description: "Résumé SEO avec mot-clé (155 caractères MAX)"
 author: "Prénom Nom"
-datePublished: "YYYY-MM-DD"       # date du jour
-image: "/images/[slug].jpg"       # optionnel
+datePublished: "YYYY-MM-DD"
+image: "/images/[slug].jpg"
 imageAlt: "Description de l'image"
 keywords: "mot-clé principal, variante 1, variante 2"
 faq:
