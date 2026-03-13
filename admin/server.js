@@ -18,7 +18,8 @@ const SA_KEY_FILE = join(__dirname, 'gcp-sa-key.json');
 
 // --- Auth config ---
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'teletravel2026';
-const sessions = new Map();
+// Secret for signing tokens — derived from password so it's stable across restarts
+const TOKEN_SECRET = crypto.createHash('sha256').update('myteletravel-blog-' + ADMIN_PASSWORD).digest('hex');
 
 // --- Deploy status tracking ---
 let deployStatus = { status: 'idle', message: '', lastUpdated: null };
@@ -27,10 +28,23 @@ const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// --- Auth middleware ---
+// --- Auth middleware (stateless HMAC tokens — survives container restarts) ---
+function createToken() {
+  const payload = Date.now().toString();
+  const sig = crypto.createHmac('sha256', TOKEN_SECRET).update(payload).digest('hex');
+  return payload + '.' + sig;
+}
+
+function verifyToken(token) {
+  if (!token || !token.includes('.')) return false;
+  const [payload, sig] = token.split('.');
+  const expected = crypto.createHmac('sha256', TOKEN_SECRET).update(payload).digest('hex');
+  return sig === expected;
+}
+
 function requireAuth(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!token || !sessions.has(token)) {
+  if (!verifyToken(token)) {
     return res.status(401).json({ error: 'Non autorisé. Connectez-vous.' });
   }
   next();
@@ -187,8 +201,7 @@ app.post('/api/login', (req, res) => {
   if (password !== ADMIN_PASSWORD) {
     return res.status(401).json({ error: 'Mot de passe incorrect.' });
   }
-  const token = crypto.randomBytes(32).toString('hex');
-  sessions.set(token, { createdAt: Date.now() });
+  const token = createToken();
   res.json({ token });
 });
 

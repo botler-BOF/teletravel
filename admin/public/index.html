@@ -381,6 +381,7 @@
   async function updateDeployBanner() {
     try {
       const res = await api('GET', '/api/deploy-status');
+      if (res.status === 401) { stopDeployPolling(); doLogout(); return; }
       const data = await res.json();
       const banner = document.getElementById('deploy-banner');
       const text = document.getElementById('deploy-text');
