@@ -148,12 +148,6 @@
   </div>
 
   <div class="container">
-    <!-- DEPLOY STATUS BANNER -->
-    <div class="deploy-banner" id="deploy-banner">
-      <div class="deploy-spinner" id="deploy-spinner"></div>
-      <span id="deploy-text"></span>
-    </div>
-
     <!-- ARTICLE LIST -->
     <div id="view-list" class="view active">
       <div class="card">
@@ -296,7 +290,6 @@
 <script>
   let authToken = localStorage.getItem('blog_admin_token');
   const uploadedImages = [];
-  let deployPollTimer = null;
 
   function api(method, url, body) {
     const opts = { method, headers: { 'Authorization': 'Bearer ' + authToken } };
@@ -328,7 +321,7 @@
     document.getElementById('login-screen').style.display = 'block';
     document.getElementById('login-password').value = '';
     document.getElementById('login-error').style.display = 'none';
-    stopDeployPolling();
+
   }
 
   async function checkSession() {
@@ -363,51 +356,6 @@
     el.textContent = msg;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 4000);
-  }
-
-  // --- Deploy status ---
-  function startDeployPolling() {
-    stopDeployPolling();
-    updateDeployBanner();
-    deployPollTimer = setInterval(updateDeployBanner, 2000);
-  }
-
-  function stopDeployPolling() {
-    if (deployPollTimer) { clearInterval(deployPollTimer); deployPollTimer = null; }
-    const banner = document.getElementById('deploy-banner');
-    banner.className = 'deploy-banner';
-  }
-
-  async function updateDeployBanner() {
-    try {
-      const res = await api('GET', '/api/deploy-status');
-      if (res.status === 401) { stopDeployPolling(); doLogout(); return; }
-      const data = await res.json();
-      const banner = document.getElementById('deploy-banner');
-      const text = document.getElementById('deploy-text');
-      const spinner = document.getElementById('deploy-spinner');
-
-      if (data.status === 'building' || data.status === 'pushing') {
-        banner.className = 'deploy-banner building';
-        spinner.style.display = 'block';
-        text.textContent = data.message;
-      } else if (data.status === 'done') {
-        banner.className = 'deploy-banner done';
-        spinner.style.display = 'none';
-        text.textContent = data.message;
-        stopDeployPolling();
-        setTimeout(() => { banner.className = 'deploy-banner'; }, 8000);
-        loadArticles();
-      } else if (data.status === 'error') {
-        banner.className = 'deploy-banner error';
-        spinner.style.display = 'none';
-        text.textContent = data.message;
-        stopDeployPolling();
-        setTimeout(() => { banner.className = 'deploy-banner'; }, 10000);
-      } else {
-        banner.className = 'deploy-banner';
-      }
-    } catch(e) {}
   }
 
   // --- Description counter ---
@@ -606,8 +554,7 @@
       if (data.success) {
         toast('Article supprime ! Build en cours...', 'success');
         loadArticles();
-        startDeployPolling();
-      } else {
+        } else {
         toast(data.error || 'Erreur suppression', 'error');
       }
     } catch(e) {
@@ -744,8 +691,7 @@
         renderArticleImages();
         document.getElementById('desc-count').textContent = '0 / 155';
         showView('list');
-        startDeployPolling();
-      } else toast(data.error, 'error');
+        } else toast(data.error, 'error');
     } catch(e) { toast('Erreur de connexion', 'error'); }
 
     btn.disabled = false;
