@@ -448,6 +448,11 @@ app.post('/api/webhook/deployed', async (req, res) => {
 app.get('/', (req, res) => res.redirect('/blog/'));
 app.use('/images', express.static(IMAGES_DIR));
 
+// Catch-all 404 — prevents requests from hanging
+app.use((req, res) => {
+  res.status(404).send('<!DOCTYPE html><html><head><title>404</title></head><body><h1>Page non trouvée</h1><p><a href="/blog/">Retour au blog</a></p></body></html>');
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`\n  ✅ Admin  : http://localhost:${PORT}/admin`);
