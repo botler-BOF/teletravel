@@ -410,6 +410,40 @@ app.post('/api/upload', requireAuth, upload.array('images', 20), (req, res) => {
   res.json({ files: req.files.map(f => ({ name: f.filename, path: `/images/${f.filename}`, size: f.size })) });
 });
 
+// Webhook called by CI/CD after deployment (sends email notification)
+const WEBHOOK_SECRET = crypto.createHash('sha256').update('webhook-' + ADMIN_PASSWORD).digest('hex');
+
+app.post('/api/webhook/deployed', async (req, res) => {
+  const { secret, commitMessage } = req.body || {};
+  if (secret !== WEBHOOK_SECRET) return res.status(403).json({ error: 'Forbidden' });
+
+  if (emailsList.length === 0) return res.json({ success: true, message: 'No recipients configured' });
+
+  const isDelete = (commitMessage || '').toLowerCase().includes('suppression');
+  const emoji = isDelete ? '🗑️' : '🚀';
+  const action = isDelete ? 'supprimé' : 'publié / mis à jour';
+
+  try {
+    await sendEmailViaGmail(
+      emailsList.map(e => e.email).join(', '),
+      `${emoji} Blog déployé : ${commitMessage || 'Mise à jour'}`,
+      `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+        <h2 style="color:#0f0f23">${emoji} Déploiement terminé</h2>
+        <p><strong>Action :</strong> ${commitMessage || 'Mise à jour du blog'}</p>
+        <p><strong>Statut :</strong> En ligne</p>
+        <p><strong>Date :</strong> ${new Date().toLocaleString('fr-FR')}</p>
+        <p><a href="https://blog-myteletravel-u5azdc2cvq-ew.a.run.app/blog/" style="background:#228be6;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:10px">Voir le blog</a></p>
+        <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
+        <p style="color:#888;font-size:12px">MyTeletravel Blog Admin — Notification automatique</p>
+      </div>`
+    );
+    res.json({ success: true, message: 'Notification envoyée' });
+  } catch (err) {
+    console.error('Webhook email error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Root → blog
 app.get('/', (req, res) => res.redirect('/blog/'));
 app.use('/images', express.static(IMAGES_DIR));

@@ -40,5 +40,17 @@ jobs:
             --allow-unauthenticated \
             --port 8080 \
             --memory 256Mi \
+            --min-instances 1 \
             --max-instances 3 \
             --set-env-vars "GCP_SA_KEY_B64=${{ secrets.GCP_SA_KEY_B64 }},GH_PAT=${{ secrets.GH_PAT }}"
+
+      - name: Send deployment notification email
+        if: success()
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          WEBHOOK_SECRET=$(echo -n "webhook-teletravel2026" | sha256sum | cut -d' ' -f1)
+          curl -s -X POST \
+            https://blog-myteletravel-u5azdc2cvq-ew.a.run.app/api/webhook/deployed \
+            -H "Content-Type: application/json" \
+            -d "{\"secret\":\"${WEBHOOK_SECRET}\",\"commitMessage\":\"${COMMIT_MSG}\"}" \
+            || echo "Webhook notification failed (non-blocking)"
