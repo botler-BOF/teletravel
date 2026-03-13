@@ -15,6 +15,8 @@
   "dependencies": {
     "astro": "^6.0.3",
     "express": "^5.2.1",
-    "multer": "^2.1.1"
+    "googleapis": "^171.4.0",
+    "multer": "^2.1.1",
+    "nodemailer": "^8.0.2"
   }
 }

@@ -23,3 +23,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 gcp-credentials.json
+admin/gcp-sa-key.json
+admin/emails.json
+admin/config.json

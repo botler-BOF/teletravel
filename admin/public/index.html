@@ -8,11 +8,10 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; }
 
-    /* --- TOPBAR --- */
     .topbar { background: #0f0f23; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-    .topbar h1 { font-size: 1.3rem; }
+    .topbar h1 { font-size: 1.3rem; cursor: pointer; }
     .topbar h1 span { color: #4dabf7; font-weight: 400; }
-    .topbar nav a { color: #aaa; text-decoration: none; margin-left: 1.5rem; font-size: 0.95rem; cursor: pointer; }
+    .topbar nav a { color: #aaa; text-decoration: none; margin-left: 1.5rem; font-size: 0.95rem; cursor: pointer; user-select: none; }
     .topbar nav a:hover, .topbar nav a.active { color: white; }
     .topbar .logout { color: #ff6b6b; cursor: pointer; margin-left: 1.5rem; font-size: 0.85rem; }
 
@@ -20,7 +19,6 @@
     .view { display: none; }
     .view.active { display: block; }
 
-    /* --- LOGIN --- */
     .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 80vh; }
     .login-box { background: white; padding: 3rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; width: 380px; }
     .login-box h2 { margin-bottom: 0.5rem; }
@@ -29,21 +27,18 @@
     .login-box input:focus { outline: none; border-color: #4dabf7; }
     .login-error { color: #e03131; font-size: 0.85rem; margin-bottom: 1rem; display: none; }
 
-    /* --- CARDS --- */
     .card { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 1.5rem; }
     .card h2 { margin-bottom: 1.5rem; color: #0f0f23; }
 
-    /* --- FORM --- */
     label { display: block; font-weight: 600; margin: 1.2rem 0 0.3rem; font-size: 0.9rem; color: #333; }
     label:first-child { margin-top: 0; }
-    input[type="text"], textarea { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid #ddd; border-radius: 8px; font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s; }
+    input[type="text"], input[type="email"], textarea { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid #ddd; border-radius: 8px; font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s; }
     input:focus, textarea:focus { outline: none; border-color: #4dabf7; }
     textarea { resize: vertical; min-height: 100px; }
     .char-count { font-size: 0.8rem; color: #999; text-align: right; margin-top: 0.2rem; }
     .char-count.over { color: #e03131; font-weight: 600; }
     .hint { font-size: 0.8rem; color: #888; margin-top: 0.2rem; }
 
-    /* --- IMAGES --- */
     .images-zone { border: 2px dashed #dee2e6; border-radius: 8px; padding: 1.5rem; text-align: center; cursor: pointer; transition: border-color 0.2s; margin-top: 0.5rem; }
     .images-zone:hover { border-color: #4dabf7; }
     .images-zone.dragover { border-color: #228be6; background: #e7f5ff; }
@@ -57,7 +52,6 @@
     .set-main { position: absolute; bottom: 20px; left: 4px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 4px; font-size: 0.6rem; padding: 2px 6px; cursor: pointer; }
     .set-main.is-main { background: #228be6; }
 
-    /* --- SECTIONS --- */
     .section-block, .faq-block { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 1rem; margin-top: 0.8rem; }
     .section-item { margin-bottom: 1rem; position: relative; }
     .section-item:last-child { margin-bottom: 0; }
@@ -69,19 +63,45 @@
     .remove-section { position: absolute; top: 0; right: 0; width: 28px; height: 28px; font-size: 0.9rem; }
     .add-btn { background: none; border: 1.5px dashed #4dabf7; color: #4dabf7; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem; margin-top: 0.5rem; }
 
-    /* --- BUTTONS --- */
     .btn { padding: 0.8rem 2rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
     .btn-primary { background: #228be6; color: white; }
     .btn-primary:hover { background: #1c7ed6; }
     .btn-primary:disabled { background: #adb5bd; cursor: not-allowed; }
     .btn-danger { background: #e03131; color: white; padding: 0.4rem 1rem; font-size: 0.85rem; }
+    .btn-sm { padding: 0.4rem 1rem; font-size: 0.85rem; }
+    .btn-outline { background: white; border: 1.5px solid #228be6; color: #228be6; padding: 0.4rem 1rem; font-size: 0.85rem; }
+    .btn-outline:hover { background: #e7f5ff; }
     .actions { margin-top: 2rem; display: flex; gap: 1rem; align-items: center; }
 
-    /* --- ARTICLE LIST --- */
     .article-row { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid #eee; }
     .article-row:last-child { border: none; }
     .article-info h3 { font-size: 1rem; margin-bottom: 0.2rem; }
     .article-info p { font-size: 0.85rem; color: #888; }
+
+    .deploy-banner { padding: 0.8rem 1.5rem; border-radius: 10px; margin-bottom: 1.5rem; display: none; align-items: center; gap: 0.8rem; font-size: 0.9rem; font-weight: 500; }
+    .deploy-banner.building { display: flex; background: #fff3bf; color: #e67700; }
+    .deploy-banner.done { display: flex; background: #d3f9d8; color: #2b8a3e; }
+    .deploy-banner.error { display: flex; background: #ffe3e3; color: #c92a2a; }
+    .deploy-spinner { width: 16px; height: 16px; border: 2.5px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; }
+
+    .email-row { display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 0; border-bottom: 1px solid #eee; }
+    .email-row:last-child { border: none; }
+    .email-info { font-size: 0.95rem; }
+    .email-info .email-name { font-weight: 600; }
+    .email-info .email-addr { color: #666; }
+    .email-add-form { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+    .email-add-form input { flex: 1; min-width: 150px; }
+
+    .status-badge { font-size: 0.8rem; padding: 0.3rem 0.8rem; border-radius: 6px; display: inline-block; font-weight: 600; }
+    .status-badge.ok { background: #d3f9d8; color: #2b8a3e; }
+    .status-badge.off { background: #ffe3e3; color: #c92a2a; }
+    .status-badge.warn { background: #fff3bf; color: #e67700; }
+
+    .config-section { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 1.2rem; margin-bottom: 1.5rem; }
+    .config-section h3 { font-size: 1rem; margin-bottom: 0.8rem; color: #0f0f23; }
+    .config-row { display: flex; gap: 0.5rem; align-items: end; flex-wrap: wrap; }
+    .config-row input { flex: 1; min-width: 200px; }
+    .config-row .btn { white-space: nowrap; }
 
     .toast { position: fixed; top: 1.5rem; right: 1.5rem; padding: 1rem 1.5rem; border-radius: 10px; color: white; font-weight: 500; z-index: 1000; animation: slideIn 0.3s ease; max-width: 400px; }
     .toast.success { background: #2f9e44; }
@@ -97,11 +117,9 @@
 </head>
 <body>
 
-<!-- ==================== LOGIN ==================== -->
+<!-- LOGIN -->
 <div id="login-screen">
-  <div class="topbar">
-    <h1>MyTeletravel <span>Blog Admin</span></h1>
-  </div>
+  <div class="topbar"><h1>MyTeletravel <span>Blog Admin</span></h1></div>
   <div class="login-wrapper">
     <div class="login-box">
       <h2>Connexion</h2>
@@ -113,19 +131,25 @@
   </div>
 </div>
 
-<!-- ==================== MAIN APP ==================== -->
+<!-- MAIN APP -->
 <div id="app-screen" style="display:none">
   <div class="topbar">
-    <h1>MyTeletravel <span>Blog Admin</span></h1>
+    <h1 onclick="showView('list')">MyTeletravel <span>Blog Admin</span></h1>
     <nav>
-      <a onclick="showView('list')" id="nav-list" class="active">Articles</a>
-      <a onclick="showView('images')" id="nav-images">Images</a>
-      <a onclick="showView('create')" id="nav-create">Nouvel article</a>
-      <a class="logout" onclick="doLogout()">Deconnexion</a>
+      <a href="javascript:void(0)" onclick="showView('list')" id="nav-list" class="active">Articles</a>
+      <a href="javascript:void(0)" onclick="showView('images')" id="nav-images">Images</a>
+      <a href="javascript:void(0)" onclick="showView('create')" id="nav-create">Nouvel article</a>
+      <a href="javascript:void(0)" onclick="showView('emails')" id="nav-emails">Notifications</a>
+      <a href="javascript:void(0)" class="logout" onclick="doLogout()">Deconnexion</a>
     </nav>
   </div>
 
   <div class="container">
+    <!-- DEPLOY STATUS BANNER -->
+    <div class="deploy-banner" id="deploy-banner">
+      <div class="deploy-spinner" id="deploy-spinner"></div>
+      <span id="deploy-text"></span>
+    </div>
 
     <!-- ARTICLE LIST -->
     <div id="view-list" class="view active">
@@ -167,9 +191,8 @@
         <input type="text" id="keywords" placeholder="voyage sur mesure, tourisme, destinations 2026">
         <div class="hint">Separes par des virgules</div>
 
-        <!-- IMAGES -->
         <label>Images de l'article</label>
-        <div class="hint">Uploadez plusieurs images. La premiere sera l'image principale (hero). Vous pourrez assigner les autres aux sections.</div>
+        <div class="hint">Uploadez plusieurs images. La premiere sera l'image principale.</div>
         <div class="images-zone" id="article-img-drop" onclick="document.getElementById('article-img-files').click()">
           <input type="file" id="article-img-files" accept="image/*" multiple>
           <p>Cliquez ou glissez vos images ici (max 20)</p>
@@ -179,11 +202,9 @@
         <label for="image-alt">Texte alternatif de l'image principale</label>
         <input type="text" id="image-alt" placeholder="Description de l'image pour le SEO">
 
-        <!-- INTRO -->
         <label for="intro">Introduction *</label>
         <textarea id="intro" rows="3" placeholder="Paragraphe d'introduction (2-3 phrases avec le mot-cle)" required></textarea>
 
-        <!-- SECTIONS -->
         <label>Sections de l'article *</label>
         <div class="hint">H2 en questions : Comment... ? / Pourquoi... ? / Quel... ?</div>
         <div class="section-block" id="sections">
@@ -208,7 +229,6 @@
         </div>
         <button type="button" class="add-btn" onclick="addSection()">+ Ajouter une section</button>
 
-        <!-- FAQ -->
         <label>FAQ (5 questions minimum) *</label>
         <div class="faq-block" id="faq-list">
           <div class="faq-item"><input type="text" class="faq-q" placeholder="Question 1"><input type="text" class="faq-a" placeholder="Reponse"><button type="button" class="remove-faq" onclick="removeFaq(this)">&times;</button></div>
@@ -226,14 +246,55 @@
       </form>
     </div>
 
+    <!-- NOTIFICATIONS -->
+    <div id="view-emails" class="view">
+      <!-- Config section -->
+      <div class="card">
+        <h2>Configuration des notifications</h2>
+        <p style="color:#666;margin-bottom:1.2rem">Recevez un email automatique quand un article est publie ou supprime.</p>
+
+        <div class="config-section">
+          <h3>Service Account Google</h3>
+          <div id="sa-status"></div>
+        </div>
+
+        <div class="config-section">
+          <h3>Email expediteur</h3>
+          <p style="font-size:0.85rem;color:#666;margin-bottom:0.8rem">Adresse Gmail/Workspace utilisee pour envoyer les notifications. Le service account doit avoir la delegation pour ce compte.</p>
+          <div class="config-row">
+            <input type="email" id="sender-email" placeholder="notifications@votredomaine.com">
+            <button type="button" class="btn btn-primary btn-sm" onclick="saveSenderEmail()">Sauvegarder</button>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <h3>Tester l'envoi</h3>
+          <div class="config-row">
+            <input type="email" id="test-email-addr" placeholder="votre@email.com">
+            <button type="button" class="btn btn-outline" id="test-email-btn" onclick="sendTestEmail()">Envoyer un test</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email list -->
+      <div class="card">
+        <h2>Destinataires des notifications</h2>
+        <div id="emails-list"></div>
+        <div class="email-add-form">
+          <input type="text" id="email-name" placeholder="Nom (optionnel)">
+          <input type="email" id="email-addr" placeholder="adresse@email.com">
+          <button type="button" class="btn btn-primary btn-sm" onclick="addEmail()">Ajouter</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
   let authToken = localStorage.getItem('blog_admin_token');
   const uploadedImages = [];
+  let deployPollTimer = null;
 
-  // --- Auth ---
   function api(method, url, body) {
     const opts = { method, headers: { 'Authorization': 'Bearer ' + authToken } };
     if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
@@ -264,9 +325,9 @@
     document.getElementById('login-screen').style.display = 'block';
     document.getElementById('login-password').value = '';
     document.getElementById('login-error').style.display = 'none';
+    stopDeployPolling();
   }
 
-  // Check saved session
   async function checkSession() {
     if (!authToken) return;
     const res = await api('GET', '/api/articles');
@@ -286,9 +347,11 @@
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.topbar nav a:not(.logout)').forEach(a => a.classList.remove('active'));
     document.getElementById('view-' + name).classList.add('active');
-    document.getElementById('nav-' + name).classList.add('active');
+    const navEl = document.getElementById('nav-' + name);
+    if (navEl) navEl.classList.add('active');
     if (name === 'list') loadArticles();
     if (name === 'images') loadGallery();
+    if (name === 'emails') { loadEmails(); loadNotifConfig(); }
   }
 
   function toast(msg, type) {
@@ -297,6 +360,50 @@
     el.textContent = msg;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 4000);
+  }
+
+  // --- Deploy status ---
+  function startDeployPolling() {
+    stopDeployPolling();
+    updateDeployBanner();
+    deployPollTimer = setInterval(updateDeployBanner, 2000);
+  }
+
+  function stopDeployPolling() {
+    if (deployPollTimer) { clearInterval(deployPollTimer); deployPollTimer = null; }
+    const banner = document.getElementById('deploy-banner');
+    banner.className = 'deploy-banner';
+  }
+
+  async function updateDeployBanner() {
+    try {
+      const res = await api('GET', '/api/deploy-status');
+      const data = await res.json();
+      const banner = document.getElementById('deploy-banner');
+      const text = document.getElementById('deploy-text');
+      const spinner = document.getElementById('deploy-spinner');
+
+      if (data.status === 'building' || data.status === 'pushing') {
+        banner.className = 'deploy-banner building';
+        spinner.style.display = 'block';
+        text.textContent = data.message;
+      } else if (data.status === 'done') {
+        banner.className = 'deploy-banner done';
+        spinner.style.display = 'none';
+        text.textContent = data.message;
+        stopDeployPolling();
+        setTimeout(() => { banner.className = 'deploy-banner'; }, 8000);
+        loadArticles();
+      } else if (data.status === 'error') {
+        banner.className = 'deploy-banner error';
+        spinner.style.display = 'none';
+        text.textContent = data.message;
+        stopDeployPolling();
+        setTimeout(() => { banner.className = 'deploy-banner'; }, 10000);
+      } else {
+        banner.className = 'deploy-banner';
+      }
+    } catch(e) {}
   }
 
   // --- Description counter ---
@@ -309,14 +416,9 @@
   // --- Image Upload (article) ---
   const articleImgDrop = document.getElementById('article-img-drop');
   const articleImgFiles = document.getElementById('article-img-files');
-
   articleImgDrop.addEventListener('dragover', e => { e.preventDefault(); articleImgDrop.classList.add('dragover'); });
   articleImgDrop.addEventListener('dragleave', () => articleImgDrop.classList.remove('dragover'));
-  articleImgDrop.addEventListener('drop', e => {
-    e.preventDefault();
-    articleImgDrop.classList.remove('dragover');
-    uploadArticleImages(e.dataTransfer.files);
-  });
+  articleImgDrop.addEventListener('drop', e => { e.preventDefault(); articleImgDrop.classList.remove('dragover'); uploadArticleImages(e.dataTransfer.files); });
   articleImgFiles.addEventListener('change', () => uploadArticleImages(articleImgFiles.files));
 
   async function uploadArticleImages(files) {
@@ -328,9 +430,8 @@
       if (data.files) {
         data.files.forEach(f => uploadedImages.push(f));
         renderArticleImages();
-        if (!document.getElementById('main-image-path').value && uploadedImages.length > 0) {
+        if (!document.getElementById('main-image-path').value && uploadedImages.length > 0)
           document.getElementById('main-image-path').value = uploadedImages[0].path;
-        }
       }
     } catch(e) { toast('Erreur upload', 'error'); }
   }
@@ -351,9 +452,8 @@
 
   function removeArticleImage(i) {
     const removed = uploadedImages.splice(i, 1)[0];
-    if (document.getElementById('main-image-path').value === removed.path) {
+    if (document.getElementById('main-image-path').value === removed.path)
       document.getElementById('main-image-path').value = uploadedImages.length > 0 ? uploadedImages[0].path : '';
-    }
     renderArticleImages();
   }
 
@@ -373,14 +473,9 @@
   // --- Gallery ---
   const galleryDrop = document.getElementById('gallery-drop');
   const galleryFiles = document.getElementById('gallery-files');
-
   galleryDrop.addEventListener('dragover', e => { e.preventDefault(); galleryDrop.classList.add('dragover'); });
   galleryDrop.addEventListener('dragleave', () => galleryDrop.classList.remove('dragover'));
-  galleryDrop.addEventListener('drop', e => {
-    e.preventDefault();
-    galleryDrop.classList.remove('dragover');
-    uploadGalleryImages(e.dataTransfer.files);
-  });
+  galleryDrop.addEventListener('drop', e => { e.preventDefault(); galleryDrop.classList.remove('dragover'); uploadGalleryImages(e.dataTransfer.files); });
   galleryFiles.addEventListener('change', () => uploadGalleryImages(galleryFiles.files));
 
   async function uploadGalleryImages(files) {
@@ -399,16 +494,12 @@
     const grid = document.getElementById('gallery-grid');
     if (images.length === 0) { grid.innerHTML = '<div class="empty">Aucune image.</div>'; return; }
     grid.innerHTML = images.map(img => `
-      <div class="img-thumb">
-        <img src="/blog${img.path}" alt="${img.name}">
-        <div class="img-path">${img.path}</div>
-      </div>
+      <div class="img-thumb"><img src="/blog${img.path}" alt="${img.name}"><div class="img-path">${img.path}</div></div>
     `).join('');
   }
 
   // --- Sections ---
   function addSection() {
-    const n = document.querySelectorAll('.section-item').length;
     const div = document.createElement('div');
     div.className = 'section-item';
     div.innerHTML = `<button type="button" class="remove-section" onclick="removeSection(this)">&times;</button>
@@ -424,7 +515,6 @@
     else toast('Il faut au moins une section', 'error');
   }
 
-  // --- FAQ ---
   function addFaq() {
     const n = document.querySelectorAll('.faq-item').length + 1;
     const div = document.createElement('div');
@@ -438,7 +528,7 @@
     else toast('Minimum 5 questions FAQ', 'error');
   }
 
-  // --- Load articles ---
+  // --- Articles ---
   async function loadArticles() {
     try {
       const res = await api('GET', '/api/articles');
@@ -465,26 +555,111 @@
     if (!confirm('Supprimer "' + title + '" ?')) return;
     const res = await api('DELETE', '/api/articles/' + slug);
     const data = await res.json();
-    if (data.success) { toast('Article supprime', 'success'); loadArticles(); }
-    else toast(data.error, 'error');
+    if (data.success) {
+      toast('Article supprime ! Build en cours...', 'success');
+      loadArticles();
+      startDeployPolling();
+    } else toast(data.error, 'error');
   }
 
-  // --- Submit ---
+  // --- Notification config ---
+  async function loadNotifConfig() {
+    try {
+      const res = await api('GET', '/api/config');
+      const data = await res.json();
+
+      // Service account status
+      const saEl = document.getElementById('sa-status');
+      if (data.serviceAccountConfigured) {
+        saEl.innerHTML = `<span class="status-badge ok">Connecte</span> <span style="font-size:0.85rem;color:#666;margin-left:0.5rem">${data.serviceAccountEmail}</span>`;
+      } else {
+        saEl.innerHTML = '<span class="status-badge off">Non configure</span> <span style="font-size:0.85rem;color:#666;margin-left:0.5rem">Ajoutez la cle GCP dans les variables d\'environnement</span>';
+      }
+
+      // Sender email
+      document.getElementById('sender-email').value = data.senderEmail || '';
+    } catch(e) {}
+  }
+
+  async function saveSenderEmail() {
+    const senderEmail = document.getElementById('sender-email').value.trim();
+    if (!senderEmail || !senderEmail.includes('@')) { toast('Email invalide', 'error'); return; }
+    const res = await api('PUT', '/api/config', { senderEmail });
+    const data = await res.json();
+    if (data.success) toast('Email expediteur sauvegarde', 'success');
+    else toast(data.error || 'Erreur', 'error');
+  }
+
+  async function sendTestEmail() {
+    const to = document.getElementById('test-email-addr').value.trim();
+    if (!to) { toast('Entrez une adresse email', 'error'); return; }
+    const btn = document.getElementById('test-email-btn');
+    btn.disabled = true; btn.textContent = 'Envoi...';
+    try {
+      const res = await api('POST', '/api/test-email', { to });
+      const data = await res.json();
+      if (data.success) toast(data.message, 'success');
+      else toast(data.error, 'error');
+    } catch(e) { toast('Erreur de connexion', 'error'); }
+    btn.disabled = false; btn.textContent = 'Envoyer un test';
+  }
+
+  // --- Emails list ---
+  async function loadEmails() {
+    try {
+      const res = await api('GET', '/api/emails');
+      const emails = await res.json();
+      const list = document.getElementById('emails-list');
+      if (emails.length === 0) {
+        list.innerHTML = '<div class="empty" style="padding:1.5rem">Aucun destinataire. Ajoutez des adresses ci-dessous.</div>';
+        return;
+      }
+      list.innerHTML = emails.map(e => `
+        <div class="email-row">
+          <div class="email-info">
+            ${e.name ? '<span class="email-name">' + e.name + '</span> — ' : ''}
+            <span class="email-addr">${e.email}</span>
+          </div>
+          <button class="btn btn-danger" onclick="removeEmail('${e.email}')">Retirer</button>
+        </div>
+      `).join('');
+    } catch(e) {}
+  }
+
+  async function addEmail() {
+    const name = document.getElementById('email-name').value.trim();
+    const email = document.getElementById('email-addr').value.trim();
+    if (!email) { toast('Entrez une adresse email', 'error'); return; }
+    const res = await api('POST', '/api/emails', { name, email });
+    const data = await res.json();
+    if (data.success) {
+      toast('Email ajoute', 'success');
+      document.getElementById('email-name').value = '';
+      document.getElementById('email-addr').value = '';
+      loadEmails();
+    } else toast(data.error, 'error');
+  }
+
+  async function removeEmail(email) {
+    if (!confirm('Retirer ' + email + ' ?')) return;
+    const res = await api('DELETE', '/api/emails/' + encodeURIComponent(email));
+    const data = await res.json();
+    if (data.success) { toast('Email retire', 'success'); loadEmails(); }
+  }
+
+  // --- Submit article ---
   document.getElementById('article-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const btn = document.getElementById('submit-btn');
-    const statusText = document.getElementById('status-text');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Publication...';
-    statusText.textContent = 'Build en cours...';
+    btn.innerHTML = '<span class="spinner"></span>Envoi...';
 
     const sections = [];
     document.querySelectorAll('.section-item').forEach(item => {
       const heading = item.querySelector('.section-heading').value.trim();
       const content = item.querySelector('.section-content').value.trim();
       const image = item.querySelector('.section-img-select')?.value || '';
-      const imageAlt = heading;
-      if (heading && content) sections.push({ heading, content, image, imageAlt });
+      if (heading && content) sections.push({ heading, content, image, imageAlt: heading });
     });
 
     const faq = [];
@@ -514,16 +689,14 @@
         uploadedImages.length = 0;
         renderArticleImages();
         document.getElementById('desc-count').textContent = '0 / 155';
-        statusText.textContent = '';
         showView('list');
-      } else { toast(data.error, 'error'); }
+        startDeployPolling();
+      } else toast(data.error, 'error');
     } catch(e) { toast('Erreur de connexion', 'error'); }
 
     btn.disabled = false;
     btn.textContent = 'Publier l\'article';
-    statusText.textContent = '';
   });
 </script>
-
 </body>
 </html>
