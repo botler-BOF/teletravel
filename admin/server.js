@@ -192,8 +192,13 @@ app.post('/api/login', (req, res) => {
   res.json({ token });
 });
 
-// Serve admin UI
-app.use('/admin', express.static(join(__dirname, 'public')));
+// Serve admin UI (no cache to always get latest version)
+app.use('/admin', (req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+}, express.static(join(__dirname, 'public')));
 
 // Serve built blog for preview
 app.use('/blog', express.static(join(ROOT, 'dist')));

@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>MyTeletravel — Admin Blog</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -557,7 +560,15 @@
         const delBtn = document.createElement('button');
         delBtn.className = 'btn btn-danger';
         delBtn.textContent = 'Supprimer';
-        delBtn.addEventListener('click', function() { deleteArticle(a.slug, a.title); });
+        delBtn.addEventListener('click', async function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          delBtn.disabled = true;
+          delBtn.textContent = 'Suppression...';
+          await deleteArticle(a.slug, a.title);
+          delBtn.disabled = false;
+          delBtn.textContent = 'Supprimer';
+        });
 
         btns.appendChild(viewBtn);
         btns.appendChild(delBtn);
@@ -580,8 +591,17 @@
   async function deleteArticle(slug, title) {
     if (!confirm('Supprimer "' + title + '" ?')) return;
     try {
-      const res = await api('DELETE', '/api/articles/' + encodeURIComponent(slug));
+      const url = '/api/articles/' + encodeURIComponent(slug);
+      console.log('DELETE', url);
+      const res = await api('DELETE', url);
+      console.log('DELETE response status:', res.status);
+      if (res.status === 401) {
+        toast('Session expiree, veuillez vous reconnecter', 'error');
+        doLogout();
+        return;
+      }
       const data = await res.json();
+      console.log('DELETE response:', data);
       if (data.success) {
         toast('Article supprime ! Build en cours...', 'success');
         loadArticles();
@@ -591,7 +611,7 @@
       }
     } catch(e) {
       console.error('Erreur deleteArticle:', e);
-      toast('Erreur de connexion', 'error');
+      toast('Erreur : ' + e.message, 'error');
     }
   }
 
