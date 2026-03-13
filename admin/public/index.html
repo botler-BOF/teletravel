@@ -536,30 +536,63 @@
       const articles = await res.json();
       const list = document.getElementById('articles-list');
       if (articles.length === 0) { list.innerHTML = '<div class="empty"><div class="empty-icon">&#128196;</div>Aucun article.<br>Cliquez sur "Nouvel article".</div>'; return; }
-      list.innerHTML = articles.map(a => `
-        <div class="article-row">
-          <div class="article-info">
-            <h3>${a.title}</h3>
-            <p>${a.author} - ${new Date(a.datePublished).toLocaleDateString('fr-FR', { year:'numeric', month:'long', day:'numeric' })}</p>
-          </div>
-          <div>
-            <a href="/blog/${a.slug}/" target="_blank" class="btn" style="background:#e9ecef;color:#333;padding:0.4rem 1rem;font-size:0.85rem;text-decoration:none;margin-right:0.5rem">Voir</a>
-            <button class="btn btn-danger" onclick="deleteArticle('${a.slug}', '${a.title.replace(/'/g, "\\'")}')">Supprimer</button>
-          </div>
-        </div>
-      `).join('');
-    } catch(e) { document.getElementById('articles-list').innerHTML = '<div class="empty">Erreur de chargement.</div>'; }
+      list.innerHTML = '';
+      articles.forEach(a => {
+        const row = document.createElement('div');
+        row.className = 'article-row';
+
+        const info = document.createElement('div');
+        info.className = 'article-info';
+        info.innerHTML = '<h3>' + escapeHtml(a.title) + '</h3><p>' + escapeHtml(a.author) + ' - ' + new Date(a.datePublished).toLocaleDateString('fr-FR', { year:'numeric', month:'long', day:'numeric' }) + '</p>';
+
+        const btns = document.createElement('div');
+
+        const viewBtn = document.createElement('a');
+        viewBtn.href = '/blog/' + a.slug + '/';
+        viewBtn.target = '_blank';
+        viewBtn.className = 'btn';
+        viewBtn.style.cssText = 'background:#e9ecef;color:#333;padding:0.4rem 1rem;font-size:0.85rem;text-decoration:none;margin-right:0.5rem';
+        viewBtn.textContent = 'Voir';
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn btn-danger';
+        delBtn.textContent = 'Supprimer';
+        delBtn.addEventListener('click', function() { deleteArticle(a.slug, a.title); });
+
+        btns.appendChild(viewBtn);
+        btns.appendChild(delBtn);
+        row.appendChild(info);
+        row.appendChild(btns);
+        list.appendChild(row);
+      });
+    } catch(e) {
+      console.error('Erreur loadArticles:', e);
+      document.getElementById('articles-list').innerHTML = '<div class="empty">Erreur de chargement.</div>';
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   }
 
   async function deleteArticle(slug, title) {
     if (!confirm('Supprimer "' + title + '" ?')) return;
-    const res = await api('DELETE', '/api/articles/' + slug);
-    const data = await res.json();
-    if (data.success) {
-      toast('Article supprime ! Build en cours...', 'success');
-      loadArticles();
-      startDeployPolling();
-    } else toast(data.error, 'error');
+    try {
+      const res = await api('DELETE', '/api/articles/' + encodeURIComponent(slug));
+      const data = await res.json();
+      if (data.success) {
+        toast('Article supprime ! Build en cours...', 'success');
+        loadArticles();
+        startDeployPolling();
+      } else {
+        toast(data.error || 'Erreur suppression', 'error');
+      }
+    } catch(e) {
+      console.error('Erreur deleteArticle:', e);
+      toast('Erreur de connexion', 'error');
+    }
   }
 
   // --- Notification config ---

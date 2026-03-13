@@ -407,7 +407,7 @@ app.post('/api/articles', requireAuth, (req, res) => {
 // Delete article — ASYNC
 app.delete('/api/articles/:slug', requireAuth, (req, res) => {
   try {
-    const slug = req.params.slug;
+    const slug = decodeURIComponent(req.params.slug);
     const filePath = join(BLOG_DIR, `${slug}.md`);
     if (!existsSync(filePath)) {
       return res.status(404).json({ error: 'Article non trouvé.' });
