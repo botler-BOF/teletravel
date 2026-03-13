@@ -231,6 +231,12 @@ app.post('/api/upload', requireAuth, upload.array('images', 20), (req, res) => {
   res.json({ files: uploaded });
 });
 
+// Redirect root to blog
+app.get('/', (req, res) => res.redirect('/blog/'));
+
+// Serve images directly for blog preview
+app.use('/images', express.static(IMAGES_DIR));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`\n  ✅ Interface admin : http://localhost:${PORT}/admin`);
