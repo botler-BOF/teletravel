@@ -185,8 +185,16 @@ app.use('/admin', (req, res, next) => {
   next();
 }, express.static(join(__dirname, 'public')));
 
-// Blog preview
-app.use('/blog', express.static(join(ROOT, 'dist')));
+// Blog — force HTML to always revalidate (so deleted/added articles show
+// up immediately), but allow assets (CSS/JS/images) to be cached normally.
+app.use('/blog', (req, res, next) => {
+  if (req.path === '/' || req.path.endsWith('/') || req.path.endsWith('.html')) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+  next();
+}, express.static(join(ROOT, 'dist'), { extensions: ['html'] }));
 
 // Image upload
 const storage = multer.diskStorage({
