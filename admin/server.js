@@ -2,6 +2,7 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { writeFileSync, mkdirSync, existsSync, readdirSync, readFileSync, unlinkSync } from 'fs';
+import { exec } from 'child_process';
 import multer from 'multer';
 import crypto from 'crypto';
 import { google } from 'googleapis';
@@ -54,7 +55,7 @@ loadLocalConfig();
 
 // --- GitHub API helper ---
 async function ghApi(method, path, body) {
-  if (!GH_PAT) throw new Error('GH_PAT non configuré');
+  if (!GH_PAT) throw new Error('GH_PAT not configured');
   const url = `https://api.github.com/repos/${GH_REPO}${path}`;
   const opts = {
     method,
@@ -97,7 +98,7 @@ async function ghPutFile(filePath, content, message) {
 // Delete file via GitHub API
 async function ghDeleteFile(filePath, message) {
   const sha = await getFileSha(filePath);
-  if (!sha) throw new Error('Fichier non trouvé: ' + filePath);
+  if (!sha) throw new Error('File not found: ' + filePath);
   return ghApi('DELETE', `/contents/${filePath}`, {
     message,
     sha,
@@ -126,9 +127,9 @@ function loadServiceAccountKey() {
 
 async function sendEmailViaGmail(to, subject, htmlBody) {
   const senderEmail = adminConfig.senderEmail;
-  if (!senderEmail) { console.log('⚠️ Pas d\'email expéditeur configuré'); return; }
+  if (!senderEmail) { console.log('⚠️ No sender email configured'); return; }
   const saKey = loadServiceAccountKey();
-  if (!saKey) { console.log('⚠️ Pas de clé service account'); return; }
+  if (!saKey) { console.log('⚠️ No service account key'); return; }
 
   try {
     const auth = new google.auth.JWT({
@@ -149,7 +150,7 @@ async function sendEmailViaGmail(to, subject, htmlBody) {
     ].join('\r\n')).toString('base64url');
 
     await gmail.users.messages.send({ userId: 'me', requestBody: { raw } });
-    console.log(`📧 Email envoyé à : ${to}`);
+    console.log(`📧 Email sent to: ${to}`);
   } catch (err) {
     console.error('❌ Email error:', err.message);
   }
@@ -167,13 +168,13 @@ app.use(express.urlencoded({ extended: true }));
 
 function requireAuth(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!verifyToken(token)) return res.status(401).json({ error: 'Non autorisé. Connectez-vous.' });
+  if (!verifyToken(token)) return res.status(401).json({ error: 'Unauthorized. Please log in.' });
   next();
 }
 
 // Login
 app.post('/api/login', (req, res) => {
-  if (req.body.password !== ADMIN_PASSWORD) return res.status(401).json({ error: 'Mot de passe incorrect.' });
+  if (req.body.password !== ADMIN_PASSWORD) return res.status(401).json({ error: 'Incorrect password.' });
   res.json({ token: createToken() });
 });
 
@@ -230,16 +231,32 @@ ${data.intro}
 
 ${sectionsContent}
 
-Découvrez nos services sur [MyTeletravel](https://myteletravel.com).
+Discover our services at [MyTeletravel](https://myteletravel.com).
 
 <section id="faq">
 
-## Questions fréquentes
+## Frequently asked questions
 
 ${faqSection}
 
 </section>
 `;
+}
+
+// --- Rebuild static site (non-blocking) ---
+let isBuilding = false;
+function rebuildSite() {
+  if (isBuilding) { console.log('⏳ Build already in progress, skipping'); return; }
+  isBuilding = true;
+  console.log('🔨 Rebuilding static site...');
+  exec('npm run build', { cwd: ROOT }, (err, stdout, stderr) => {
+    isBuilding = false;
+    if (err) {
+      console.error('❌ Build failed:', stderr || err.message);
+    } else {
+      console.log('✅ Site rebuilt successfully');
+    }
+  });
 }
 
 // --- API Routes ---
@@ -274,11 +291,11 @@ app.post('/api/articles', requireAuth, async (req, res) => {
   try {
     const data = req.body;
     if (!data.title || !data.description || !data.author || !data.keywords)
-      return res.status(400).json({ error: 'Champs obligatoires manquants.' });
+      return res.status(400).json({ error: 'Required fields missing.' });
     if (data.description.length > 155)
-      return res.status(400).json({ error: 'Description > 155 caractères.' });
+      return res.status(400).json({ error: 'Description exceeds 155 characters.' });
     if (!data.faq || data.faq.length < 5)
-      return res.status(400).json({ error: 'Il faut au moins 5 questions FAQ.' });
+      return res.status(400).json({ error: 'At least 5 FAQ questions required.' });
 
     const slug = toSlug(data.title);
     data.datePublished = new Date().toISOString().split('T')[0];
@@ -290,26 +307,29 @@ app.post('/api/articles', requireAuth, async (req, res) => {
     writeFileSync(join(BLOG_DIR, `${slug}.md`), markdown, 'utf-8');
 
     // Commit to GitHub → triggers CI/CD → redeploy
-    await ghPutFile(`src/content/blog/${slug}.md`, markdown, `Nouvel article : ${data.title}`);
+    await ghPutFile(`src/content/blog/${slug}.md`, markdown, `New article: ${data.title}`);
+
+    // Rebuild static site so /blog/ preview is up to date
+    rebuildSite();
 
     // Send notification
     const blogUrl = `https://blog-myteletravel-u5azdc2cvq-ew.a.run.app/blog/${slug}/`;
     sendNotification(
-      `🚀 Article publié : ${data.title}`,
+      `🚀 Article published: ${data.title}`,
       `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
-        <h2 style="color:#0f0f23">🚀 Article publié</h2>
-        <p><strong>Titre :</strong> ${data.title}</p>
-        <p><strong>Date :</strong> ${new Date().toLocaleString('fr-FR')}</p>
-        <p><a href="${blogUrl}" style="background:#228be6;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:10px">Voir l'article</a></p>
+        <h2 style="color:#0f0f23">🚀 Article published</h2>
+        <p><strong>Title:</strong> ${data.title}</p>
+        <p><strong>Date:</strong> ${new Date().toLocaleString('en-US')}</p>
+        <p><a href="${blogUrl}" style="background:#228be6;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:10px">View article</a></p>
         <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
         <p style="color:#888;font-size:12px">MyTeletravel Blog Admin</p>
       </div>`
     ).catch(e => console.error('Email error:', e.message));
 
-    res.json({ success: true, slug, message: `Article "${data.title}" publié ! Déploiement en cours (~2 min).` });
+    res.json({ success: true, slug, message: `Article "${data.title}" published! Deployment in progress (~2 min).` });
   } catch (err) {
     console.error('❌ Create article error:', err);
-    res.status(500).json({ error: `Erreur : ${err.message}` });
+    res.status(500).json({ error: `Error: ${err.message}` });
   }
 });
 
@@ -329,24 +349,27 @@ app.delete('/api/articles/:slug', requireAuth, async (req, res) => {
     }
 
     // Delete from GitHub → triggers CI/CD → redeploy
-    await ghDeleteFile(`src/content/blog/${slug}.md`, `Suppression article : ${title}`);
+    await ghDeleteFile(`src/content/blog/${slug}.md`, `Delete article: ${title}`);
+
+    // Rebuild static site so /blog/ preview is up to date
+    rebuildSite();
 
     // Send notification
     sendNotification(
-      `🗑️ Article supprimé : ${title}`,
+      `🗑️ Article deleted: ${title}`,
       `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
-        <h2 style="color:#0f0f23">🗑️ Article supprimé</h2>
-        <p><strong>Titre :</strong> ${title}</p>
-        <p><strong>Date :</strong> ${new Date().toLocaleString('fr-FR')}</p>
+        <h2 style="color:#0f0f23">🗑️ Article deleted</h2>
+        <p><strong>Title:</strong> ${title}</p>
+        <p><strong>Date:</strong> ${new Date().toLocaleString('en-US')}</p>
         <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
         <p style="color:#888;font-size:12px">MyTeletravel Blog Admin</p>
       </div>`
     ).catch(e => console.error('Email error:', e.message));
 
-    res.json({ success: true, message: `Article "${title}" supprimé ! Déploiement en cours (~2 min).` });
+    res.json({ success: true, message: `Article "${title}" deleted! Deployment in progress (~2 min).` });
   } catch (err) {
     console.error('❌ Delete article error:', err);
-    res.status(500).json({ error: `Erreur : ${err.message}` });
+    res.status(500).json({ error: `Error: ${err.message}` });
   }
 });
 
@@ -355,8 +378,8 @@ app.get('/api/emails', requireAuth, (req, res) => res.json(emailsList));
 
 app.post('/api/emails', requireAuth, (req, res) => {
   const { email, name } = req.body;
-  if (!email || !email.includes('@')) return res.status(400).json({ error: 'Email invalide.' });
-  if (emailsList.some(e => e.email === email)) return res.status(400).json({ error: 'Email déjà ajouté.' });
+  if (!email || !email.includes('@')) return res.status(400).json({ error: 'Invalid email.' });
+  if (emailsList.some(e => e.email === email)) return res.status(400).json({ error: 'Email already added.' });
   emailsList.push({ email, name: name || '', addedAt: new Date().toISOString() });
   persistConfig();
   res.json({ success: true, emails: emailsList });
@@ -388,25 +411,25 @@ app.put('/api/config', requireAuth, (req, res) => {
 // Test email
 app.post('/api/test-email', requireAuth, async (req, res) => {
   const { to } = req.body;
-  if (!to) return res.status(400).json({ error: 'Adresse email requise.' });
+  if (!to) return res.status(400).json({ error: 'Email address required.' });
   try {
-    await sendEmailViaGmail(to, '✅ Test notification MyTeletravel Blog',
+    await sendEmailViaGmail(to, '✅ Test notification — MyTeletravel Blog',
       `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
-        <h2 style="color:#0f0f23">✅ Test de notification</h2>
-        <p>Les notifications fonctionnent correctement.</p>
-        <p><strong>Date :</strong> ${new Date().toLocaleString('fr-FR')}</p>
+        <h2 style="color:#0f0f23">✅ Notification test</h2>
+        <p>Notifications are working correctly.</p>
+        <p><strong>Date:</strong> ${new Date().toLocaleString('en-US')}</p>
         <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
         <p style="color:#888;font-size:12px">MyTeletravel Blog Admin</p>
       </div>`);
-    res.json({ success: true, message: 'Email de test envoyé !' });
+    res.json({ success: true, message: 'Test email sent!' });
   } catch (err) {
-    res.status(500).json({ error: `Erreur : ${err.message}` });
+    res.status(500).json({ error: `Error: ${err.message}` });
   }
 });
 
 // Upload images
 app.post('/api/upload', requireAuth, upload.array('images', 20), (req, res) => {
-  if (!req.files?.length) return res.status(400).json({ error: 'Aucune image.' });
+  if (!req.files?.length) return res.status(400).json({ error: 'No images.' });
   res.json({ files: req.files.map(f => ({ name: f.filename, path: `/images/${f.filename}`, size: f.size })) });
 });
 
@@ -419,25 +442,24 @@ app.post('/api/webhook/deployed', async (req, res) => {
 
   if (emailsList.length === 0) return res.json({ success: true, message: 'No recipients configured' });
 
-  const isDelete = (commitMessage || '').toLowerCase().includes('suppression');
+  const isDelete = (commitMessage || '').toLowerCase().includes('suppression') || (commitMessage || '').toLowerCase().includes('delete');
   const emoji = isDelete ? '🗑️' : '🚀';
-  const action = isDelete ? 'supprimé' : 'publié / mis à jour';
 
   try {
     await sendEmailViaGmail(
       emailsList.map(e => e.email).join(', '),
-      `${emoji} Blog déployé : ${commitMessage || 'Mise à jour'}`,
+      `${emoji} Blog deployed: ${commitMessage || 'Update'}`,
       `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
-        <h2 style="color:#0f0f23">${emoji} Déploiement terminé</h2>
-        <p><strong>Action :</strong> ${commitMessage || 'Mise à jour du blog'}</p>
-        <p><strong>Statut :</strong> En ligne</p>
-        <p><strong>Date :</strong> ${new Date().toLocaleString('fr-FR')}</p>
-        <p><a href="https://blog-myteletravel-u5azdc2cvq-ew.a.run.app/blog/" style="background:#228be6;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:10px">Voir le blog</a></p>
+        <h2 style="color:#0f0f23">${emoji} Deployment complete</h2>
+        <p><strong>Action:</strong> ${commitMessage || 'Blog update'}</p>
+        <p><strong>Status:</strong> Live</p>
+        <p><strong>Date:</strong> ${new Date().toLocaleString('en-US')}</p>
+        <p><a href="https://blog-myteletravel-u5azdc2cvq-ew.a.run.app/blog/" style="background:#228be6;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:10px">View blog</a></p>
         <hr style="border:none;border-top:1px solid #eee;margin:20px 0">
-        <p style="color:#888;font-size:12px">MyTeletravel Blog Admin — Notification automatique</p>
+        <p style="color:#888;font-size:12px">MyTeletravel Blog Admin — Automatic notification</p>
       </div>`
     );
-    res.json({ success: true, message: 'Notification envoyée' });
+    res.json({ success: true, message: 'Notification sent' });
   } catch (err) {
     console.error('Webhook email error:', err.message);
     res.status(500).json({ error: err.message });
@@ -450,7 +472,7 @@ app.use('/images', express.static(IMAGES_DIR));
 
 // Catch-all 404 — prevents requests from hanging
 app.use((req, res) => {
-  res.status(404).send('<!DOCTYPE html><html><head><title>404</title></head><body><h1>Page non trouvée</h1><p><a href="/blog/">Retour au blog</a></p></body></html>');
+  res.status(404).send('<!DOCTYPE html><html><head><title>404</title></head><body><h1>Page not found</h1><p><a href="/blog/">Back to blog</a></p></body></html>');
 });
 
 const PORT = process.env.PORT || 3000;
@@ -458,6 +480,6 @@ app.listen(PORT, () => {
   console.log(`\n  ✅ Admin  : http://localhost:${PORT}/admin`);
   console.log(`  📖 Blog   : http://localhost:${PORT}/blog`);
   console.log(`  🔑 Pass   : ${ADMIN_PASSWORD}`);
-  console.log(`  📧 Emails : ${emailsList.length} destinataire(s)`);
-  console.log(`  🐙 GitHub : ${GH_PAT ? 'configuré' : '⚠️ GH_PAT manquant'}\n`);
+  console.log(`  📧 Emails : ${emailsList.length} recipient(s)`);
+  console.log(`  🐙 GitHub : ${GH_PAT ? 'configured' : '⚠️ GH_PAT missing'}\n`);
 });

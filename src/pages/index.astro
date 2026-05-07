@@ -6,39 +6,283 @@ import { getCollection } from 'astro:content';
 const articles = (await getCollection('blog')).sort(
   (a, b) => new Date(b.data.datePublished).getTime() - new Date(a.data.datePublished).getTime()
 );
+
+const featured = articles[0];
+const rest = articles.slice(1);
 ---
 
 <BlogLayout
-  title="Blog MyTeletravel — Conseils voyage et tourisme"
-  description="Retrouvez nos articles, conseils et guides pour organiser vos voyages sur mesure. Destinations, astuces et tendances du tourisme."
+  title="MyTeletravel Blog — Travel guides, destinations & remote work tips"
+  description="Travel guides, destination tips and remote work advice from the MyTeletravel team. Discover where to stay, work, and explore around the world."
 >
-  <h1>Blog MyTeletravel</h1>
-  <p class="intro">Conseils, guides et inspirations pour vos voyages sur mesure.</p>
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">The MyTeletravel Blog</p>
+      <h1>Travel guides for remote workers &amp; curious explorers.</h1>
+      <p class="hero-sub">
+        Destination deep-dives, practical tips and stories from the road —
+        curated by the MyTeletravel team to help you stay, work and explore
+        anywhere in the world.
+      </p>
+    </div>
+  </section>
 
-  <div class="articles-grid">
-    {articles.map((article) => (
-      <ArticleCard
-        title={article.data.title}
-        description={article.data.description}
-        slug={article.id}
-        datePublished={article.data.datePublished}
-        author={article.data.author}
-        image={article.data.image}
-      />
-    ))}
-  </div>
+  <section class="content">
+    {articles.length === 0 ? (
+      <div class="empty">
+        <p>No articles published yet. Check back soon.</p>
+      </div>
+    ) : (
+      <>
+        {featured && (
+          <a href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/${featured.id}/`} class="featured">
+            {featured.data.image && (
+              <div class="featured-image">
+                <img
+                  src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}${featured.data.image}`}
+                  alt={featured.data.imageAlt || featured.data.title}
+                  loading="eager"
+                />
+              </div>
+            )}
+            <div class="featured-body">
+              <p class="featured-tag">Latest article</p>
+              <h2>{featured.data.title}</h2>
+              <p class="featured-desc">{featured.data.description}</p>
+              <p class="featured-meta">
+                <span>{featured.data.author}</span>
+                <span class="dot">·</span>
+                <time datetime={featured.data.datePublished}>
+                  {new Date(featured.data.datePublished).toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric',
+                  })}
+                </time>
+              </p>
+              <span class="featured-cta">Read article →</span>
+            </div>
+          </a>
+        )}
+
+        {rest.length > 0 && (
+          <>
+            <h2 class="grid-title">More articles</h2>
+            <div class="articles-grid">
+              {rest.map((article) => (
+                <ArticleCard
+                  title={article.data.title}
+                  description={article.data.description}
+                  slug={article.id}
+                  datePublished={article.data.datePublished}
+                  author={article.data.author}
+                  image={article.data.image}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </>
+    )}
+  </section>
 </BlogLayout>
 
 <style>
-  .intro {
-    font-size: 1.15rem;
-    color: #666;
-    margin-bottom: 2.5rem;
+  .hero {
+    background: #000000;
+    color: #ffffff;
+    padding: 4.5rem 1.5rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -150px;
+    right: -150px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 126, 51, 0.18), transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -180px;
+    left: -120px;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(90, 226, 225, 0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .eyebrow {
+    color: #ff7e33;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin: 0 0 1rem;
+  }
+
+  .hero h1 {
+    font-family: 'Poppins', sans-serif;
+    color: #ffffff;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    max-width: 18ch;
+    margin: 0 0 1.5rem;
+  }
+
+  .hero-sub {
+    color: #d4d4d4;
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    line-height: 1.65;
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 2rem;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: #858481;
+  }
+
+  .featured {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 2.5rem;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 24px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    margin-bottom: 4rem;
+  }
+
+  .featured:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
+    border-color: #d4d4d4;
+    text-decoration: none;
+  }
+
+  .featured-image {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #f5f5f5;
+  }
+
+  .featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+    transition: transform 0.5s ease;
+  }
+
+  .featured:hover .featured-image img {
+    transform: scale(1.04);
+  }
+
+  .featured-body {
+    padding: 2.5rem 2.5rem 2.5rem 0.5rem;
+  }
+
+  .featured-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #008796;
+    background: rgba(0, 135, 150, 0.08);
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    margin: 0 0 1rem;
+  }
+
+  .featured h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 1rem;
+    color: #000000;
+    letter-spacing: -0.02em;
+  }
+
+  .featured-desc {
+    font-size: 1rem;
+    color: #4a4a48;
+    line-height: 1.65;
+    margin: 0 0 1.25rem;
+  }
+
+  .featured-meta {
+    font-size: 0.85rem;
+    color: #858481;
+    margin: 0 0 1.5rem;
+    font-weight: 500;
+  }
+
+  .featured-meta .dot {
+    margin: 0 0.4rem;
+    color: #d4d4d4;
+  }
+
+  .featured-cta {
+    color: #ff7e33;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .grid-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 1.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e5e5;
   }
 
   .articles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.75rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 3rem 1.25rem 3.5rem;
+    }
+    .featured {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .featured-body {
+      padding: 1.75rem 1.5rem 2rem;
+    }
+    .content {
+      padding: 3rem 1.25rem 2rem;
+    }
   }
 </style>

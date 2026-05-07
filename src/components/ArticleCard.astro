@@ -9,10 +9,10 @@ interface Props {
 }
 
 const { title, description, slug, datePublished, author, image } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const href = `${base}/${slug}/`;
 
-const formattedDate = new Date(datePublished).toLocaleDateString('fr-FR', {
+const formattedDate = new Date(datePublished).toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
@@ -21,59 +21,124 @@ const formattedDate = new Date(datePublished).toLocaleDateString('fr-FR', {
 
 <article class="card">
   <a href={href}>
-    {image && <img src={`${base}${image}`} alt={title} loading="lazy" />}
+    {image && (
+      <div class="card-image">
+        <img src={`${base}${image}`} alt={title} loading="lazy" />
+      </div>
+    )}
     <div class="card-body">
+      <p class="meta">
+        <span class="author">{author}</span>
+        <span class="dot">·</span>
+        <time datetime={datePublished}>{formattedDate}</time>
+      </p>
       <h2>{title}</h2>
-      <p class="meta">{formattedDate} — {author}</p>
       <p class="desc">{description}</p>
+      <span class="read-more">Read article →</span>
     </div>
   </a>
 </article>
 
 <style>
   .card {
-    background: white;
-    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    height: 100%;
+    display: flex;
   }
 
   .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    border-color: #d4d4d4;
   }
 
   .card a {
     text-decoration: none;
     color: inherit;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
 
-  .card img {
+  .card a:hover {
+    text-decoration: none;
+  }
+
+  .card-image {
     width: 100%;
-    height: 200px;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #f5f5f5;
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    border-radius: 0;
+    transition: transform 0.4s ease;
+  }
+
+  .card:hover .card-image img {
+    transform: scale(1.04);
   }
 
   .card-body {
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
   }
 
   h2 {
-    font-size: 1.3rem;
-    margin: 0 0 0.5rem;
-    color: #0f0f23;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 0 0 0.65rem;
+    color: #000000;
+    letter-spacing: -0.01em;
   }
 
   .meta {
-    font-size: 0.85rem;
-    color: #888;
-    margin-bottom: 0.8rem;
+    font-size: 0.8rem;
+    color: #858481;
+    margin: 0 0 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+
+  .meta .author {
+    color: #1a1a19;
+    font-weight: 600;
+  }
+
+  .meta .dot {
+    margin: 0 0.4rem;
+    color: #d4d4d4;
   }
 
   .desc {
     font-size: 0.95rem;
-    color: #555;
-    margin: 0;
+    color: #4a4a48;
+    margin: 0 0 1.1rem;
+    line-height: 1.6;
+    flex-grow: 1;
+  }
+
+  .read-more {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ff7e33;
+    margin-top: auto;
+  }
+
+  .card:hover .read-more {
+    color: #e66a1f;
   }
 </style>

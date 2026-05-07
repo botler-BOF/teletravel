@@ -3,31 +3,110 @@ const year = new Date().getFullYear();
 ---
 
 <footer>
-  <div class="footer-content">
-    <p>&copy; {year} <a href="https://myteletravel.com">MyTeletravel</a> — Tous droits réservés.</p>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="https://myteletravel.com" class="footer-logo">
+        <span class="brand-mark">My</span><span class="brand-text">Teletravel</span>
+      </a>
+      <p class="tagline">Remote work stays around the world.</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://myteletravel.com">Home</a>
+      <a href="https://myteletravel.com/destinations">Destinations</a>
+      <a href={import.meta.env.BASE_URL}>Blog</a>
+      <a href="https://myteletravel.com/contact">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; {year} MyTeletravel. All rights reserved.</p>
   </div>
 </footer>
 
 <style>
   footer {
-    background: #0f0f23;
-    color: #999;
-    padding: 2rem;
-    margin-top: 4rem;
-    text-align: center;
+    background: #000000;
+    color: #a3a3a3;
+    margin-top: 5rem;
   }
 
-  .footer-content {
-    max-width: 1000px;
+  .footer-inner {
+    max-width: 1100px;
     margin: 0 auto;
+    padding: 3rem 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
   }
 
-  a {
-    color: #4dabf7;
+  .footer-brand {
+    max-width: 320px;
+  }
+
+  .footer-logo {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    display: inline-block;
+    margin-bottom: 0.6rem;
+  }
+
+  .footer-logo:hover {
+    color: #ffffff;
     text-decoration: none;
   }
 
-  a:hover {
-    text-decoration: underline;
+  .brand-mark {
+    color: #ff7e33;
+  }
+
+  .tagline {
+    font-size: 0.9rem;
+    color: #858481;
+    margin: 0;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2rem;
+  }
+
+  .footer-links a {
+    color: #d4d4d4;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+
+  .footer-links a:hover {
+    color: #ff7e33;
+    text-decoration: none;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid #1a1a19;
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+  }
+
+  .footer-bottom p {
+    max-width: 1100px;
+    margin: 0 auto;
+    font-size: 0.85rem;
+    color: #858481;
+  }
+
+  @media (max-width: 600px) {
+    .footer-inner {
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 2.5rem 1.25rem 1.5rem;
+    }
   }
 </style>
