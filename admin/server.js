@@ -294,6 +294,32 @@ app.get('/api/images', requireAuth, (req, res) => {
   res.json(files.map(f => ({ name: f, path: `/images/${f}` })));
 });
 
+// DELETE image — removes from local FS and (if present) from GitHub
+app.delete('/api/images/:filename', requireAuth, async (req, res) => {
+  try {
+    const filename = decodeURIComponent(req.params.filename);
+    if (!filename || filename.includes('/') || filename.includes('\\') || filename.includes('..')) {
+      return res.status(400).json({ error: 'Invalid filename.' });
+    }
+
+    const filePath = join(IMAGES_DIR, filename);
+    if (existsSync(filePath)) unlinkSync(filePath);
+
+    try {
+      await ghDeleteFile(`public/images/${filename}`, `Delete image: ${filename}`);
+    } catch (e) {
+      // Image may have been uploaded but never committed — that's fine.
+      console.log(`ℹ️ GitHub delete skipped for ${filename}: ${e.message}`);
+    }
+
+    rebuildSite();
+    res.json({ success: true, message: `Image "${filename}" deleted.` });
+  } catch (err) {
+    console.error('❌ Delete image error:', err);
+    res.status(500).json({ error: `Error: ${err.message}` });
+  }
+});
+
 // CREATE article via GitHub API (persists + triggers redeploy)
 app.post('/api/articles', requireAuth, async (req, res) => {
   try {

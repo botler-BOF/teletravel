@@ -651,9 +651,42 @@
     const images = await res.json();
     const grid = document.getElementById('gallery-grid');
     if (images.length === 0) { grid.innerHTML = '<div class="empty">No images.</div>'; return; }
-    grid.innerHTML = images.map(img => `
-      <div class="img-thumb"><img src="/blog${img.path}" alt="${img.name}"><div class="img-path">${img.path}</div></div>
-    `).join('');
+    grid.innerHTML = '';
+    images.forEach(img => {
+      const div = document.createElement('div');
+      div.className = 'img-thumb';
+      div.innerHTML = `
+        <img src="/blog${img.path}" alt="${escapeHtml(img.name)}">
+        <button class="remove-img" title="Delete image">&times;</button>
+        <div class="img-path">${escapeHtml(img.path)}</div>
+      `;
+      div.querySelector('.remove-img').addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        deleteGalleryImage(img.name, e.currentTarget);
+      });
+      grid.appendChild(div);
+    });
+  }
+
+  async function deleteGalleryImage(filename, btn) {
+    if (!confirm('Delete "' + filename + '"? This cannot be undone.')) return;
+    if (btn) { btn.disabled = true; btn.textContent = '…'; }
+    try {
+      const res = await api('DELETE', '/api/images/' + encodeURIComponent(filename));
+      if (res.status === 401) { toast('Session expired, please log in again', 'error'); doLogout(); return; }
+      const data = await res.json();
+      if (data.success) {
+        toast(data.message + ' Build in progress…', 'success');
+        loadGallery();
+      } else {
+        toast(data.error || 'Delete error', 'error');
+        if (btn) { btn.disabled = false; btn.textContent = '×'; }
+      }
+    } catch(e) {
+      toast('Error: ' + e.message, 'error');
+      if (btn) { btn.disabled = false; btn.textContent = '×'; }
+    }
   }
 
   // --- Sections ---
