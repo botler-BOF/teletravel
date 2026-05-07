@@ -28,6 +28,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <article class="article">
     <header class="article-header">
       <a href={`${base}/`} class="back-link">← All articles</a>
+      <p class="eyebrow"><span class="dot-orange">●</span> Travel guide</p>
       <h1>{article.data.title}</h1>
       <p class="article-lead">{article.data.description}</p>
       <div class="article-meta">
@@ -75,9 +76,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   .back-link {
     display: inline-block;
-    color: #858481;
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    color: #1a1a1a;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     margin-bottom: 1.75rem;
     text-decoration: none;
     transition: color 0.15s ease;
@@ -88,26 +92,41 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     text-decoration: none;
   }
 
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #1a1a1a;
+    margin: 0 0 1rem;
+  }
+
+  .dot-orange {
+    color: #ff7e33;
+    margin-right: 0.4rem;
+  }
+
   .article-header h1 {
     font-family: 'Poppins', sans-serif;
-    font-size: clamp(1.85rem, 4vw, 2.75rem);
-    line-height: 1.15;
+    font-size: clamp(1.85rem, 4vw, 2.85rem);
+    line-height: 1.1;
     font-weight: 700;
     letter-spacing: -0.025em;
-    color: #000000;
+    color: #1a1a1a;
     margin-bottom: 1rem;
   }
 
   .article-lead {
     font-size: 1.15rem;
-    color: #4a4a48;
+    color: #2a2a2a;
     line-height: 1.55;
     margin-bottom: 2rem;
   }
 
   .article-meta {
-    border-top: 1px solid #e5e5e5;
-    border-bottom: 1px solid #e5e5e5;
+    border-top: 2px solid #000000;
+    border-bottom: 2px solid #000000;
     padding: 1.25rem 0;
   }
 
@@ -120,8 +139,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .author-avatar {
     width: 44px;
     height: 44px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ff7e33 0%, #ff5252 100%);
+    background: #ff7e33;
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -131,37 +149,46 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     font-size: 1.05rem;
     text-transform: uppercase;
     flex-shrink: 0;
+    border: 2px solid #000000;
   }
 
   .author-name {
     font-weight: 600;
-    color: #1a1a19;
+    color: #1a1a1a;
     margin: 0;
     font-size: 0.95rem;
     line-height: 1.2;
   }
 
   .article-date {
-    font-size: 0.85rem;
-    color: #858481;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: #666666;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
   }
 
   .hero-image {
     width: 100%;
     max-height: 480px;
     object-fit: cover;
-    border-radius: 16px;
+    border-radius: 0;
+    border: 2px solid #000000;
     margin-bottom: 2.5rem;
   }
 
   .article-body :global(h2) {
     font-family: 'Poppins', sans-serif;
     font-size: 1.6rem;
-    font-weight: 600;
-    color: #000000;
+    font-weight: 700;
+    color: #1a1a1a;
     margin-top: 3rem;
     margin-bottom: 1rem;
     letter-spacing: -0.015em;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid #ff7e33;
+    display: inline-block;
   }
 
   .article-body :global(p) {
@@ -173,15 +200,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   .article-body :global(img) {
     width: 100%;
-    border-radius: 12px;
+    border-radius: 0;
+    border: 2px solid #000000;
     margin: 2rem 0;
   }
 
   .article-body :global(a) {
     color: #ff7e33;
     text-decoration: underline;
-    text-decoration-thickness: 1px;
+    text-decoration-thickness: 2px;
     text-underline-offset: 3px;
+    font-weight: 600;
   }
 
   .article-body :global(a:hover) {
@@ -200,8 +229,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   }
 
   .article-body :global(strong) {
-    color: #000000;
-    font-weight: 600;
+    color: #1a1a1a;
+    font-weight: 700;
   }
 
   @media (max-width: 600px) {

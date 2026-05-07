@@ -9,6 +9,7 @@ const articles = (await getCollection('blog')).sort(
 
 const featured = articles[0];
 const rest = articles.slice(1);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <BlogLayout
@@ -17,13 +18,30 @@ const rest = articles.slice(1);
 >
   <section class="hero">
     <div class="hero-inner">
-      <p class="eyebrow">The MyTeletravel Blog</p>
-      <h1>Travel guides for remote workers &amp; curious explorers.</h1>
+      <p class="eyebrow"><span class="dot-orange">●</span> The MyTeletravel Blog</p>
+      <h1>
+        Travel guides for <span class="hl">remote workers</span><br />
+        &amp; curious explorers.
+      </h1>
       <p class="hero-sub">
         Destination deep-dives, practical tips and stories from the road —
         curated by the MyTeletravel team to help you stay, work and explore
         anywhere in the world.
       </p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">{articles.length}</span>
+          <span class="stat-label">Articles</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">∞</span>
+          <span class="stat-label">Destinations</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">100%</span>
+          <span class="stat-label">Curated</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -35,11 +53,11 @@ const rest = articles.slice(1);
     ) : (
       <>
         {featured && (
-          <a href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/${featured.id}/`} class="featured">
+          <a href={`${base}/${featured.id}/`} class="featured">
             {featured.data.image && (
               <div class="featured-image">
                 <img
-                  src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}${featured.data.image}`}
+                  src={`${base}${featured.data.image}`}
                   alt={featured.data.imageAlt || featured.data.title}
                   loading="eager"
                 />
@@ -50,8 +68,8 @@ const rest = articles.slice(1);
               <h2>{featured.data.title}</h2>
               <p class="featured-desc">{featured.data.description}</p>
               <p class="featured-meta">
-                <span>{featured.data.author}</span>
-                <span class="dot">·</span>
+                <span class="author">{featured.data.author}</span>
+                <span class="sep">/</span>
                 <time datetime={featured.data.datePublished}>
                   {new Date(featured.data.datePublished).toLocaleDateString('en-US', {
                     year: 'numeric', month: 'long', day: 'numeric',
@@ -65,7 +83,10 @@ const rest = articles.slice(1);
 
         {rest.length > 0 && (
           <>
-            <h2 class="grid-title">More articles</h2>
+            <div class="grid-header">
+              <h2 class="grid-title">More articles</h2>
+              <p class="grid-count">{rest.length} {rest.length === 1 ? 'story' : 'stories'}</p>
+            </div>
             <div class="articles-grid">
               {rest.map((article) => (
                 <ArticleCard
@@ -87,9 +108,10 @@ const rest = articles.slice(1);
 
 <style>
   .hero {
-    background: #000000;
-    color: #ffffff;
-    padding: 4.5rem 1.5rem 5rem;
+    background: #ffffff;
+    color: #1a1a1a;
+    padding: 5rem 1.5rem 4.5rem;
+    border-bottom: 2px solid #000000;
     position: relative;
     overflow: hidden;
   }
@@ -97,61 +119,113 @@ const rest = articles.slice(1);
   .hero::before {
     content: '';
     position: absolute;
-    top: -150px;
-    right: -150px;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(255, 126, 51, 0.18), transparent 70%);
-    pointer-events: none;
+    top: 60px;
+    right: -120px;
+    width: 320px;
+    height: 320px;
+    background: #5ae2e1;
+    opacity: 0.6;
+    z-index: 0;
+    transform: rotate(15deg);
   }
 
   .hero::after {
     content: '';
     position: absolute;
-    bottom: -180px;
-    left: -120px;
-    width: 380px;
-    height: 380px;
-    background: radial-gradient(circle, rgba(90, 226, 225, 0.12), transparent 70%);
-    pointer-events: none;
+    bottom: -100px;
+    left: -80px;
+    width: 240px;
+    height: 240px;
+    background: #ff7e33;
+    opacity: 0.18;
+    z-index: 0;
+    border-radius: 50%;
   }
 
   .hero-inner {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     position: relative;
+    z-index: 1;
   }
 
   .eyebrow {
-    color: #ff7e33;
-    font-weight: 600;
-    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    margin: 0 0 1rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .dot-orange {
+    color: #ff7e33;
+    margin-right: 0.4rem;
   }
 
   .hero h1 {
     font-family: 'Poppins', sans-serif;
-    color: #ffffff;
-    font-size: clamp(2.2rem, 5vw, 3.5rem);
-    line-height: 1.1;
+    color: #1a1a1a;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    line-height: 1.05;
     font-weight: 700;
     letter-spacing: -0.025em;
     max-width: 18ch;
-    margin: 0 0 1.5rem;
+    margin: 0 0 1.75rem;
+  }
+
+  .hl {
+    background: #ff7e33;
+    color: #ffffff;
+    padding: 0 0.4rem;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
 
   .hero-sub {
-    color: #d4d4d4;
+    color: #2a2a2a;
     font-size: clamp(1rem, 1.5vw, 1.15rem);
-    line-height: 1.65;
-    max-width: 60ch;
-    margin: 0;
+    line-height: 1.6;
+    max-width: 56ch;
+    margin: 0 0 2.25rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    border: 2px solid #000000;
+    background: #ffffff;
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    box-shadow: 4px 4px 0 #000000;
+  }
+
+  .stat-num {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #ff7e33;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #1a1a1a;
+    font-weight: 700;
   }
 
   .content {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 4rem 1.5rem 2rem;
   }
@@ -159,28 +233,27 @@ const rest = articles.slice(1);
   .empty {
     text-align: center;
     padding: 4rem 1rem;
-    color: #858481;
+    color: #666666;
+    border: 2px dashed #000000;
   }
 
   .featured {
     display: grid;
     grid-template-columns: 1.1fr 1fr;
-    gap: 2.5rem;
-    align-items: center;
+    gap: 0;
     background: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 24px;
+    border: 2px solid #000000;
     overflow: hidden;
     text-decoration: none;
     color: inherit;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
     margin-bottom: 4rem;
+    box-shadow: 8px 8px 0 #000000;
   }
 
   .featured:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
-    border-color: #d4d4d4;
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0 #ff7e33;
     text-decoration: none;
   }
 
@@ -188,6 +261,7 @@ const rest = articles.slice(1);
     aspect-ratio: 4 / 3;
     overflow: hidden;
     background: #f5f5f5;
+    border-right: 2px solid #000000;
   }
 
   .featured-image img {
@@ -203,65 +277,97 @@ const rest = articles.slice(1);
   }
 
   .featured-body {
-    padding: 2.5rem 2.5rem 2.5rem 0.5rem;
+    padding: 2.5rem 2.5rem 2.5rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .featured-tag {
     display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #008796;
-    background: rgba(0, 135, 150, 0.08);
-    padding: 0.3rem 0.75rem;
-    border-radius: 999px;
-    margin: 0 0 1rem;
+    color: #1a1a1a;
+    background: #5ae2e1;
+    border: 2px solid #000000;
+    padding: 0.3rem 0.65rem;
+    margin: 0 0 1.25rem;
+    align-self: flex-start;
   }
 
   .featured h2 {
     font-family: 'Poppins', sans-serif;
-    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    font-size: clamp(1.5rem, 2.6vw, 2.1rem);
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.15;
     margin: 0 0 1rem;
-    color: #000000;
+    color: #1a1a1a;
     letter-spacing: -0.02em;
   }
 
   .featured-desc {
     font-size: 1rem;
-    color: #4a4a48;
-    line-height: 1.65;
-    margin: 0 0 1.25rem;
+    color: #2a2a2a;
+    line-height: 1.6;
+    margin: 0 0 1.5rem;
   }
 
   .featured-meta {
-    font-size: 0.85rem;
-    color: #858481;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: #1a1a1a;
     margin: 0 0 1.5rem;
-    font-weight: 500;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
-  .featured-meta .dot {
-    margin: 0 0.4rem;
-    color: #d4d4d4;
+  .featured-meta .author {
+    color: #ff7e33;
+  }
+
+  .featured-meta .sep {
+    margin: 0 0.5rem;
   }
 
   .featured-cta {
-    color: #ff7e33;
-    font-weight: 600;
+    color: #1a1a1a;
+    font-weight: 700;
     font-size: 0.95rem;
+    border-bottom: 2px solid #ff7e33;
+    padding-bottom: 1px;
+    align-self: flex-start;
+  }
+
+  .grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 0 0 1.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #000000;
   }
 
   .grid-title {
     font-family: 'Poppins', sans-serif;
     font-size: 1.5rem;
-    font-weight: 600;
-    color: #000000;
-    margin: 0 0 1.75rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e5e5e5;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .grid-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #666666;
+    font-weight: 700;
+    margin: 0;
   }
 
   .articles-grid {
@@ -272,17 +378,24 @@ const rest = articles.slice(1);
 
   @media (max-width: 768px) {
     .hero {
-      padding: 3rem 1.25rem 3.5rem;
+      padding: 3rem 1.25rem 3rem;
     }
     .featured {
       grid-template-columns: 1fr;
-      gap: 0;
+    }
+    .featured-image {
+      border-right: none;
+      border-bottom: 2px solid #000000;
     }
     .featured-body {
       padding: 1.75rem 1.5rem 2rem;
     }
     .content {
       padding: 3rem 1.25rem 2rem;
+    }
+    .articles-grid {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
     }
   }
 </style>

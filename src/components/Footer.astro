@@ -1,54 +1,63 @@
 ---
 const year = new Date().getFullYear();
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
       <a href="https://myteletravel.com" class="footer-logo">
-        <span class="brand-mark">My</span><span class="brand-text">Teletravel</span>
+        <span class="brand-mark">My</span>Teletravel
       </a>
       <p class="tagline">Remote work stays around the world.</p>
     </div>
-    <div class="footer-links">
-      <a href="https://myteletravel.com">Home</a>
-      <a href="https://myteletravel.com/destinations">Destinations</a>
-      <a href={import.meta.env.BASE_URL}>Blog</a>
-      <a href="https://myteletravel.com/contact">Contact</a>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <p class="col-title">Site</p>
+        <a href="https://myteletravel.com">Home</a>
+        <a href="https://myteletravel.com/destinations">Destinations</a>
+        <a href={base}>Blog</a>
+        <a href="https://myteletravel.com/contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <p class="col-title">More</p>
+        <a href="https://myteletravel.com">About</a>
+        <a href="https://myteletravel.com">FAQ</a>
+      </div>
     </div>
   </div>
   <div class="footer-bottom">
-    <p>&copy; {year} MyTeletravel. All rights reserved.</p>
+    <p>&copy; {year} MyTeletravel — All rights reserved.</p>
   </div>
 </footer>
 
 <style>
   footer {
-    background: #000000;
-    color: #a3a3a3;
+    background: #ffffff;
+    color: #1a1a1a;
     margin-top: 5rem;
+    border-top: 2px solid #000000;
   }
 
   .footer-inner {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 3rem 1.5rem 2rem;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 3rem;
     align-items: flex-start;
-    gap: 2rem;
-    flex-wrap: wrap;
   }
 
   .footer-brand {
-    max-width: 320px;
+    max-width: 360px;
   }
 
   .footer-logo {
     font-family: 'Poppins', sans-serif;
     font-size: 1.4rem;
     font-weight: 700;
-    color: #ffffff;
+    color: #1a1a1a;
     text-decoration: none;
     letter-spacing: -0.02em;
     display: inline-block;
@@ -56,7 +65,7 @@ const year = new Date().getFullYear();
   }
 
   .footer-logo:hover {
-    color: #ffffff;
+    color: #1a1a1a;
     text-decoration: none;
   }
 
@@ -66,47 +75,66 @@ const year = new Date().getFullYear();
 
   .tagline {
     font-size: 0.9rem;
-    color: #858481;
+    color: #666666;
     margin: 0;
   }
 
-  .footer-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem 2rem;
+  .footer-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
   }
 
-  .footer-links a {
-    color: #d4d4d4;
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .col-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #1a1a1a;
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-col a {
+    color: #1a1a1a;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 500;
     transition: color 0.15s ease;
   }
 
-  .footer-links a:hover {
+  .footer-col a:hover {
     color: #ff7e33;
     text-decoration: none;
   }
 
   .footer-bottom {
-    border-top: 1px solid #1a1a19;
+    border-top: 1px solid #e5e5e5;
     padding: 1.25rem 1.5rem;
     text-align: center;
   }
 
   .footer-bottom p {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     font-size: 0.85rem;
-    color: #858481;
+    color: #666666;
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 700px) {
     .footer-inner {
-      flex-direction: column;
-      gap: 1.5rem;
+      grid-template-columns: 1fr;
+      gap: 2rem;
       padding: 2.5rem 1.25rem 1.5rem;
+    }
+    .footer-cols {
+      gap: 1.5rem;
     }
   }
 </style>
