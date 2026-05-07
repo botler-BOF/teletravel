@@ -18,34 +18,62 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 >
   <section class="hero">
     <div class="hero-inner">
-      <p class="eyebrow"><span class="dot-orange">●</span> The MyTeletravel Blog</p>
+      <span class="eyebrow">
+        <span class="dot"></span>
+        The MyTeletravel Blog
+      </span>
+
       <h1>
-        Travel guides for <span class="hl">remote workers</span><br />
+        Travel guides for
+        <span class="hl">
+          remote workers
+          <svg class="hl-underline" viewBox="0 0 220 14" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M2 9 Q 60 2, 110 6 T 218 5" />
+          </svg>
+        </span>
+        <br />
         &amp; curious explorers.
       </h1>
+
       <p class="hero-sub">
-        Destination deep-dives, practical tips and stories from the road —
+        Destination deep-dives, practical tips and real stories from the road —
         curated by the MyTeletravel team to help you stay, work and explore
         anywhere in the world.
       </p>
+
+      <div class="hero-actions">
+        <a href="#articles" class="cta-primary">
+          Browse articles
+          <span class="arrow">→</span>
+        </a>
+        <a href="https://myteletravel.com/destinations" class="cta-ghost">
+          Explore destinations
+        </a>
+      </div>
+
       <div class="hero-stats">
         <div class="stat">
           <span class="stat-num">{articles.length}</span>
-          <span class="stat-label">Articles</span>
+          <span class="stat-label">Articles published</span>
         </div>
+        <div class="stat-divider"></div>
         <div class="stat">
-          <span class="stat-num">∞</span>
-          <span class="stat-label">Destinations</span>
+          <span class="stat-num">25+</span>
+          <span class="stat-label">Destinations covered</span>
         </div>
+        <div class="stat-divider"></div>
         <div class="stat">
           <span class="stat-num">100%</span>
-          <span class="stat-label">Curated</span>
+          <span class="stat-label">Curated by humans</span>
         </div>
       </div>
     </div>
+
+    <div class="hero-decor decor-1" aria-hidden="true"></div>
+    <div class="hero-decor decor-2" aria-hidden="true"></div>
   </section>
 
-  <section class="content">
+  <section class="content" id="articles">
     {articles.length === 0 ? (
       <div class="empty">
         <p>No articles published yet. Check back soon.</p>
@@ -64,19 +92,25 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
               </div>
             )}
             <div class="featured-body">
-              <p class="featured-tag">Latest article</p>
+              <span class="featured-tag">
+                <span class="featured-tag-dot"></span>
+                Latest article
+              </span>
               <h2>{featured.data.title}</h2>
               <p class="featured-desc">{featured.data.description}</p>
               <p class="featured-meta">
                 <span class="author">{featured.data.author}</span>
-                <span class="sep">/</span>
+                <span class="sep">•</span>
                 <time datetime={featured.data.datePublished}>
                   {new Date(featured.data.datePublished).toLocaleDateString('en-US', {
                     year: 'numeric', month: 'long', day: 'numeric',
                   })}
                 </time>
               </p>
-              <span class="featured-cta">Read article →</span>
+              <span class="featured-cta">
+                Read article
+                <span class="arrow">→</span>
+              </span>
             </div>
           </a>
         )}
@@ -84,8 +118,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         {rest.length > 0 && (
           <>
             <div class="grid-header">
-              <h2 class="grid-title">More articles</h2>
-              <p class="grid-count">{rest.length} {rest.length === 1 ? 'story' : 'stories'}</p>
+              <div>
+                <h2 class="grid-title">More articles</h2>
+                <p class="grid-sub">{rest.length} {rest.length === 1 ? 'story' : 'stories'} to inspire your next trip</p>
+              </div>
             </div>
             <div class="articles-grid">
               {rest.map((article) => (
@@ -108,152 +144,247 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <style>
   .hero {
-    background: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, #fff8f3 100%);
     color: #1a1a1a;
-    padding: 5rem 1.5rem 4.5rem;
-    border-bottom: 2px solid #000000;
+    padding: 6rem 1.5rem 5.5rem;
     position: relative;
     overflow: hidden;
   }
 
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: 60px;
-    right: -120px;
-    width: 320px;
-    height: 320px;
-    background: #5ae2e1;
-    opacity: 0.6;
-    z-index: 0;
-    transform: rotate(15deg);
-  }
-
-  .hero::after {
-    content: '';
-    position: absolute;
-    bottom: -100px;
-    left: -80px;
-    width: 240px;
-    height: 240px;
-    background: #ff7e33;
-    opacity: 0.18;
-    z-index: 0;
-    border-radius: 50%;
-  }
-
   .hero-inner {
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
+    text-align: left;
   }
 
   .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    color: #1a1a1a;
-    font-weight: 700;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    margin: 0 0 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #008796;
+    background: #ecfbfb;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    margin-bottom: 2rem;
   }
 
-  .dot-orange {
-    color: #ff7e33;
-    margin-right: 0.4rem;
+  .eyebrow .dot {
+    width: 8px;
+    height: 8px;
+    background: #ff7e33;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(255, 126, 51, 0.18);
   }
 
   .hero h1 {
     font-family: 'Poppins', sans-serif;
     color: #1a1a1a;
-    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
     line-height: 1.05;
     font-weight: 700;
-    letter-spacing: -0.025em;
-    max-width: 18ch;
-    margin: 0 0 1.75rem;
+    letter-spacing: -0.03em;
+    margin: 0 0 2rem;
+    max-width: 100%;
   }
 
   .hl {
-    background: #ff7e33;
-    color: #ffffff;
-    padding: 0 0.4rem;
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
+    position: relative;
+    display: inline-block;
+    color: #ff7e33;
+    white-space: nowrap;
+  }
+
+  .hl-underline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.35rem;
+    width: 100%;
+    height: 0.65rem;
+    fill: none;
+    stroke: #ff7e33;
+    stroke-width: 4;
+    stroke-linecap: round;
+    opacity: 0.85;
   }
 
   .hero-sub {
-    color: #2a2a2a;
-    font-size: clamp(1rem, 1.5vw, 1.15rem);
-    line-height: 1.6;
-    max-width: 56ch;
-    margin: 0 0 2.25rem;
+    color: #4a4a4a;
+    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+    line-height: 1.65;
+    max-width: 60ch;
+    margin: 0 0 2.5rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+  }
+
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #1a1a1a;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 1rem 1.75rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1),
+                box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),
+                background 0.25s ease;
+    box-shadow: 0 8px 24px rgba(26, 26, 26, 0.18);
+  }
+
+  .cta-primary:hover {
+    background: #ff7e33;
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(255, 126, 51, 0.4);
+  }
+
+  .cta-primary .arrow {
+    display: inline-block;
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .cta-primary:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  .cta-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 999px;
+    border: 1.5px solid #d4d4d4;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .cta-ghost:hover {
+    background: #1a1a1a;
+    border-color: #1a1a1a;
+    color: #ffffff;
+    text-decoration: none;
   }
 
   .hero-stats {
     display: flex;
+    align-items: center;
     gap: 1.5rem;
+    padding: 1.5rem 1.75rem;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid #ececec;
+    border-radius: 22px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    width: fit-content;
     flex-wrap: wrap;
   }
 
   .stat {
-    border: 2px solid #000000;
-    background: #ffffff;
-    padding: 0.85rem 1.25rem;
     display: flex;
-    align-items: baseline;
-    gap: 0.6rem;
-    box-shadow: 4px 4px 0 #000000;
+    flex-direction: column;
+    gap: 0.15rem;
   }
 
   .stat-num {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 1.4rem;
+    font-size: 1.75rem;
     color: #ff7e33;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
+    line-height: 1;
   }
 
   .stat-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #1a1a1a;
-    font-weight: 700;
+    font-size: 0.82rem;
+    color: #6b6b6b;
+    font-weight: 500;
   }
 
+  .stat-divider {
+    width: 1px;
+    height: 36px;
+    background: #ececec;
+  }
+
+  /* Decorative shapes */
+  .hero-decor {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 50%;
+    filter: blur(40px);
+  }
+
+  .decor-1 {
+    top: -100px;
+    right: -100px;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(90, 226, 225, 0.45), transparent 70%);
+  }
+
+  .decor-2 {
+    bottom: -120px;
+    left: -80px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(255, 126, 51, 0.35), transparent 70%);
+  }
+
+  /* Content */
   .content {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 4rem 1.5rem 2rem;
+    padding: 5rem 1.5rem 3rem;
   }
 
   .empty {
     text-align: center;
     padding: 4rem 1rem;
-    color: #666666;
-    border: 2px dashed #000000;
+    color: #6b6b6b;
+    border: 1px dashed #d4d4d4;
+    border-radius: 22px;
   }
 
+  /* Featured */
   .featured {
     display: grid;
     grid-template-columns: 1.1fr 1fr;
     gap: 0;
     background: #ffffff;
-    border: 2px solid #000000;
+    border: 1px solid #ececec;
+    border-radius: 28px;
     overflow: hidden;
     text-decoration: none;
     color: inherit;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    margin-bottom: 4rem;
-    box-shadow: 8px 8px 0 #000000;
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1),
+                box-shadow 0.4s cubic-bezier(0.4,0,0.2,1);
+    margin-bottom: 5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 12px 28px rgba(0, 0, 0, 0.05);
   }
 
   .featured:hover {
-    transform: translate(-4px, -4px);
-    box-shadow: 12px 12px 0 #ff7e33;
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08), 0 32px 64px rgba(0, 0, 0, 0.1);
     text-decoration: none;
   }
 
@@ -261,7 +392,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     aspect-ratio: 4 / 3;
     overflow: hidden;
     background: #f5f5f5;
-    border-right: 2px solid #000000;
   }
 
   .featured-image img {
@@ -269,104 +399,115 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     height: 100%;
     object-fit: cover;
     border-radius: 0;
-    transition: transform 0.5s ease;
+    transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
   }
 
   .featured:hover .featured-image img {
-    transform: scale(1.04);
+    transform: scale(1.05);
   }
 
   .featured-body {
-    padding: 2.5rem 2.5rem 2.5rem 2.5rem;
+    padding: 2.75rem 3rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
 
   .featured-tag {
-    display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #1a1a1a;
-    background: #5ae2e1;
-    border: 2px solid #000000;
-    padding: 0.3rem 0.65rem;
-    margin: 0 0 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #008796;
+    background: #ecfbfb;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    margin: 0 0 1.5rem;
     align-self: flex-start;
+  }
+
+  .featured-tag-dot {
+    width: 6px;
+    height: 6px;
+    background: #008796;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(0, 135, 150, 0.18);
   }
 
   .featured h2 {
     font-family: 'Poppins', sans-serif;
-    font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+    font-size: clamp(1.6rem, 2.6vw, 2.25rem);
     font-weight: 700;
-    line-height: 1.15;
-    margin: 0 0 1rem;
+    line-height: 1.2;
+    margin: 0 0 1.1rem;
     color: #1a1a1a;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
   }
 
   .featured-desc {
-    font-size: 1rem;
-    color: #2a2a2a;
-    line-height: 1.6;
+    font-size: 1.05rem;
+    color: #4a4a4a;
+    line-height: 1.65;
     margin: 0 0 1.5rem;
   }
 
   .featured-meta {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    color: #1a1a1a;
-    margin: 0 0 1.5rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    font-size: 0.88rem;
+    color: #6b6b6b;
+    margin: 0 0 1.75rem;
+    font-weight: 500;
   }
 
   .featured-meta .author {
-    color: #ff7e33;
+    color: #1a1a1a;
+    font-weight: 600;
   }
 
   .featured-meta .sep {
     margin: 0 0.5rem;
+    color: #d4d4d4;
   }
 
   .featured-cta {
-    color: #1a1a1a;
-    font-weight: 700;
-    font-size: 0.95rem;
-    border-bottom: 2px solid #ff7e33;
-    padding-bottom: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ff7e33;
+    font-weight: 600;
+    font-size: 0.98rem;
     align-self: flex-start;
   }
 
+  .featured-cta .arrow {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .featured:hover .featured-cta .arrow {
+    transform: translateX(5px);
+  }
+
+  /* Grid header */
   .grid-header {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    margin: 0 0 1.75rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #000000;
+    align-items: flex-end;
+    margin: 0 0 2rem;
   }
 
   .grid-title {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.85rem;
     font-weight: 700;
     color: #1a1a1a;
-    margin: 0;
-    letter-spacing: -0.02em;
+    margin: 0 0 0.35rem;
+    letter-spacing: -0.025em;
   }
 
-  .grid-count {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #666666;
-    font-weight: 700;
+  .grid-sub {
+    font-size: 0.95rem;
+    color: #6b6b6b;
     margin: 0;
   }
 
@@ -378,20 +519,27 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   @media (max-width: 768px) {
     .hero {
-      padding: 3rem 1.25rem 3rem;
+      padding: 4rem 1.25rem 4rem;
+    }
+    .hero-actions {
+      margin-bottom: 3rem;
+    }
+    .hero-stats {
+      width: 100%;
+      gap: 1rem 1.5rem;
+      justify-content: space-between;
+    }
+    .stat-divider {
+      display: none;
     }
     .featured {
       grid-template-columns: 1fr;
     }
-    .featured-image {
-      border-right: none;
-      border-bottom: 2px solid #000000;
-    }
     .featured-body {
-      padding: 1.75rem 1.5rem 2rem;
+      padding: 2rem 1.75rem 2.25rem;
     }
     .content {
-      padding: 3rem 1.25rem 2rem;
+      padding: 3.5rem 1.25rem 2rem;
     }
     .articles-grid {
       grid-template-columns: 1fr;

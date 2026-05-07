@@ -27,10 +27,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 >
   <article class="article">
     <header class="article-header">
-      <a href={`${base}/`} class="back-link">← All articles</a>
-      <p class="eyebrow"><span class="dot-orange">●</span> Travel guide</p>
+      <a href={`${base}/`} class="back-link">
+        <span class="back-arrow">←</span>
+        All articles
+      </a>
+
+      <span class="article-tag">
+        <span class="dot"></span>
+        Travel guide
+      </span>
+
       <h1>{article.data.title}</h1>
       <p class="article-lead">{article.data.description}</p>
+
       <div class="article-meta">
         <div class="author-block">
           <span class="author-avatar">{article.data.author.charAt(0)}</span>
@@ -71,20 +80,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   }
 
   .article-header {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2.75rem;
   }
 
   .back-link {
-    display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    color: #1a1a1a;
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 1.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #6b6b6b;
+    font-size: 0.92rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
     text-decoration: none;
-    transition: color 0.15s ease;
+    transition: color 0.2s ease;
   }
 
   .back-link:hover {
@@ -92,54 +100,69 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     text-decoration: none;
   }
 
-  .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: #1a1a1a;
-    margin: 0 0 1rem;
+  .back-arrow {
+    transition: transform 0.25s ease;
+    display: inline-block;
   }
 
-  .dot-orange {
-    color: #ff7e33;
-    margin-right: 0.4rem;
+  .back-link:hover .back-arrow {
+    transform: translateX(-3px);
+  }
+
+  .article-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #008796;
+    background: #ecfbfb;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+  }
+
+  .article-tag .dot {
+    width: 7px;
+    height: 7px;
+    background: #ff7e33;
+    border-radius: 50%;
   }
 
   .article-header h1 {
     font-family: 'Poppins', sans-serif;
-    font-size: clamp(1.85rem, 4vw, 2.85rem);
+    font-size: clamp(2rem, 4vw, 3.1rem);
     line-height: 1.1;
     font-weight: 700;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.03em;
     color: #1a1a1a;
-    margin-bottom: 1rem;
+    margin-bottom: 1.1rem;
   }
 
   .article-lead {
-    font-size: 1.15rem;
-    color: #2a2a2a;
-    line-height: 1.55;
+    font-size: 1.18rem;
+    color: #4a4a4a;
+    line-height: 1.6;
     margin-bottom: 2rem;
   }
 
   .article-meta {
-    border-top: 2px solid #000000;
-    border-bottom: 2px solid #000000;
-    padding: 1.25rem 0;
+    border-top: 1px solid #ececec;
+    border-bottom: 1px solid #ececec;
+    padding: 1.4rem 0;
   }
 
   .author-block {
     display: flex;
     align-items: center;
-    gap: 0.85rem;
+    gap: 0.95rem;
   }
 
   .author-avatar {
-    width: 44px;
-    height: 44px;
-    background: #ff7e33;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff7e33 0%, #ff5252 100%);
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -149,67 +172,74 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     font-size: 1.05rem;
     text-transform: uppercase;
     flex-shrink: 0;
-    border: 2px solid #000000;
+    box-shadow: 0 4px 12px rgba(255, 126, 51, 0.25);
   }
 
   .author-name {
     font-weight: 600;
     color: #1a1a1a;
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.98rem;
     line-height: 1.2;
   }
 
   .article-date {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    color: #666666;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-weight: 700;
+    font-size: 0.86rem;
+    color: #9a9a9a;
   }
 
   .hero-image {
     width: 100%;
     max-height: 480px;
     object-fit: cover;
-    border-radius: 0;
-    border: 2px solid #000000;
-    margin-bottom: 2.5rem;
+    border-radius: 22px;
+    margin-bottom: 3rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 
   .article-body :global(h2) {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.6rem;
+    font-size: 1.7rem;
     font-weight: 700;
     color: #1a1a1a;
-    margin-top: 3rem;
-    margin-bottom: 1rem;
-    letter-spacing: -0.015em;
-    padding-bottom: 0.6rem;
-    border-bottom: 2px solid #ff7e33;
-    display: inline-block;
+    margin-top: 3.25rem;
+    margin-bottom: 1.1rem;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .article-body :global(h2)::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    bottom: 0.55rem;
+    width: 4px;
+    background: #ff7e33;
+    border-radius: 4px;
   }
 
   .article-body :global(p) {
-    font-size: 1.05rem;
-    line-height: 1.75;
+    font-size: 1.08rem;
+    line-height: 1.8;
     color: #2a2a2a;
-    margin-bottom: 1.4rem;
+    margin-bottom: 1.5rem;
   }
 
   .article-body :global(img) {
     width: 100%;
-    border-radius: 0;
-    border: 2px solid #000000;
-    margin: 2rem 0;
+    border-radius: 18px;
+    margin: 2.5rem 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 
   .article-body :global(a) {
     color: #ff7e33;
     text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 3px;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
     font-weight: 600;
   }
 
@@ -219,13 +249,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   .article-body :global(ul),
   .article-body :global(ol) {
-    margin: 0 0 1.4rem 1.5rem;
+    margin: 0 0 1.5rem 1.5rem;
     color: #2a2a2a;
     font-size: 1.05rem;
   }
 
   .article-body :global(li) {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.55rem;
   }
 
   .article-body :global(strong) {

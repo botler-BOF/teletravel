@@ -10,18 +10,23 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
     </a>
     <nav class="nav-links">
       <a href={base}>Articles</a>
-      <a href="https://myteletravel.com">Destinations</a>
-      <a href="https://myteletravel.com" class="cta">Visit site →</a>
+      <a href="https://myteletravel.com/destinations">Destinations</a>
+      <a href="https://myteletravel.com" class="cta">
+        Visit site
+        <span class="arrow">→</span>
+      </a>
     </nav>
   </div>
 </header>
 
 <style>
   header {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
     color: #1a1a1a;
-    padding: 1.1rem 1.5rem;
-    border-bottom: 2px solid #000000;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #ececec;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -42,10 +47,10 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
     font-weight: 700;
     color: #1a1a1a;
     text-decoration: none;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
+    align-items: center;
+    gap: 0.55rem;
   }
 
   .logo:hover {
@@ -58,57 +63,87 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   }
 
   .logo-tag {
-    font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #1a1a1a;
-    background: #5ae2e1;
-    border: 2px solid #000000;
-    padding: 0.18rem 0.55rem;
-    margin-left: 0.4rem;
+    color: #008796;
+    background: #ecfbfb;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    margin-left: 0.2rem;
   }
 
   .nav-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 2rem;
     align-items: center;
   }
 
   .nav-links a {
-    color: #1a1a1a;
+    color: #2a2a2a;
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 500;
-    transition: color 0.15s ease;
+    transition: color 0.2s ease;
+    position: relative;
   }
 
-  .nav-links a:hover {
+  .nav-links a:not(.cta):hover {
     color: #ff7e33;
     text-decoration: none;
   }
 
-  .nav-links .cta {
+  .nav-links a:not(.cta)::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
     background: #ff7e33;
+    transform: translateX(-50%);
+    transition: width 0.25s ease;
+    border-radius: 2px;
+  }
+
+  .nav-links a:not(.cta):hover::after {
+    width: 100%;
+  }
+
+  .nav-links .cta {
+    background: #1a1a1a;
     color: #ffffff;
-    padding: 0.55rem 1.1rem;
-    border: 2px solid #000000;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
     font-weight: 600;
-    box-shadow: 4px 4px 0 #000000;
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    font-size: 0.92rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .nav-links .cta:hover {
-    color: #ffffff;
     background: #ff7e33;
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000000;
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(255, 126, 51, 0.32);
+  }
+
+  .nav-links .cta .arrow {
+    transition: transform 0.25s ease;
+    display: inline-block;
+  }
+
+  .nav-links .cta:hover .arrow {
+    transform: translateX(3px);
   }
 
   @media (max-width: 700px) {
     header {
-      padding: 0.9rem 1rem;
+      padding: 0.85rem 1rem;
     }
     .logo {
       font-size: 1.15rem;
@@ -117,14 +152,14 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
       display: none;
     }
     .nav-links {
-      gap: 0.9rem;
+      gap: 1rem;
     }
     .nav-links a:not(.cta) {
       display: none;
     }
     .nav-links .cta {
-      box-shadow: 3px 3px 0 #000000;
-      padding: 0.45rem 0.9rem;
+      padding: 0.55rem 1rem;
+      font-size: 0.88rem;
     }
   }
 </style>

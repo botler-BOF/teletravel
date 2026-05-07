@@ -9,8 +9,9 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
       <a href="https://myteletravel.com" class="footer-logo">
         <span class="brand-mark">My</span>Teletravel
       </a>
-      <p class="tagline">Remote work stays around the world.</p>
+      <p class="tagline">Remote work stays around the world — curated by travelers, for travelers.</p>
     </div>
+
     <div class="footer-cols">
       <div class="footer-col">
         <p class="col-title">Site</p>
@@ -20,9 +21,9 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
         <a href="https://myteletravel.com/contact">Contact</a>
       </div>
       <div class="footer-col">
-        <p class="col-title">More</p>
+        <p class="col-title">Community</p>
         <a href="https://myteletravel.com">About</a>
-        <a href="https://myteletravel.com">FAQ</a>
+        <a href="https://myteletravel.com">Help</a>
       </div>
     </div>
   </div>
@@ -33,16 +34,16 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 
 <style>
   footer {
-    background: #ffffff;
+    background: #fafafa;
     color: #1a1a1a;
     margin-top: 5rem;
-    border-top: 2px solid #000000;
+    border-top: 1px solid #ececec;
   }
 
   .footer-inner {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 3rem 1.5rem 2rem;
+    padding: 3.5rem 1.5rem 2.5rem;
     display: grid;
     grid-template-columns: 1.4fr 1fr;
     gap: 3rem;
@@ -50,18 +51,18 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   }
 
   .footer-brand {
-    max-width: 360px;
+    max-width: 380px;
   }
 
   .footer-logo {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #1a1a1a;
     text-decoration: none;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     display: inline-block;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.75rem;
   }
 
   .footer-logo:hover {
@@ -74,9 +75,10 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   }
 
   .tagline {
-    font-size: 0.9rem;
-    color: #666666;
+    font-size: 0.95rem;
+    color: #6b6b6b;
     margin: 0;
+    line-height: 1.6;
   }
 
   .footer-cols {
@@ -88,25 +90,24 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   .footer-col {
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    gap: 0.65rem;
   }
 
   .col-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     color: #1a1a1a;
     margin-bottom: 0.4rem;
   }
 
   .footer-col a {
-    color: #1a1a1a;
+    color: #2a2a2a;
     text-decoration: none;
-    font-size: 0.92rem;
+    font-size: 0.93rem;
     font-weight: 500;
-    transition: color 0.15s ease;
+    transition: color 0.2s ease;
   }
 
   .footer-col a:hover {
@@ -115,8 +116,8 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   }
 
   .footer-bottom {
-    border-top: 1px solid #e5e5e5;
-    padding: 1.25rem 1.5rem;
+    border-top: 1px solid #ececec;
+    padding: 1.4rem 1.5rem;
     text-align: center;
   }
 
@@ -124,14 +125,14 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
     max-width: 1200px;
     margin: 0 auto;
     font-size: 0.85rem;
-    color: #666666;
+    color: #9a9a9a;
   }
 
   @media (max-width: 700px) {
     .footer-inner {
       grid-template-columns: 1fr;
       gap: 2rem;
-      padding: 2.5rem 1.25rem 1.5rem;
+      padding: 2.5rem 1.25rem 1.75rem;
     }
     .footer-cols {
       gap: 1.5rem;
