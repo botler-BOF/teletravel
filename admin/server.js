@@ -106,12 +106,45 @@ async function ghDeleteFile(filePath, message) {
   });
 }
 
-// Persist config to GitHub (non-blocking)
-function persistConfig() {
-  ghPutFile('admin/emails.json', JSON.stringify(emailsList, null, 2), 'Update notification emails')
-    .catch(e => console.error('❌ Persist emails:', e.message));
-  ghPutFile('admin/config.json', JSON.stringify(adminConfig, null, 2), 'Update admin config')
-    .catch(e => console.error('❌ Persist config:', e.message));
+// Persist config to GitHub. Returns { ok, error } so callers can surface
+// failures to the user (instead of fire-and-forget which silently dropped
+// updates and produced false-positive "success" toasts).
+async function persistConfig() {
+  try {
+    await ghPutFile('admin/emails.json', JSON.stringify(emailsList, null, 2), 'Update notification emails');
+    await ghPutFile('admin/config.json', JSON.stringify(adminConfig, null, 2), 'Update admin config');
+    return { ok: true };
+  } catch (e) {
+    console.error('❌ Persist config:', e.message);
+    return { ok: false, error: e.message };
+  }
+}
+
+// GitHub is the source of truth — read fresh state instead of trusting
+// any single Cloud Run instance's in-memory copy (which can be stale
+// when more than one instance is running).
+async function fetchRemoteEmailsList() {
+  try {
+    const data = await ghApi('GET', `/contents/admin/emails.json?ref=${GH_BRANCH}`);
+    const content = Buffer.from(data.content, 'base64').toString('utf-8');
+    const parsed = JSON.parse(content);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (e) {
+    console.error('❌ Fetch emails from GitHub:', e.message);
+  }
+  return null;
+}
+
+async function fetchRemoteAdminConfig() {
+  try {
+    const data = await ghApi('GET', `/contents/admin/config.json?ref=${GH_BRANCH}`);
+    const content = Buffer.from(data.content, 'base64').toString('utf-8');
+    const parsed = JSON.parse(content);
+    if (parsed && typeof parsed === 'object') return parsed;
+  } catch (e) {
+    console.error('❌ Fetch config from GitHub:', e.message);
+  }
+  return null;
 }
 
 // --- Email via Gmail API ---
@@ -157,6 +190,10 @@ async function sendEmailViaGmail(to, subject, htmlBody) {
 }
 
 async function sendNotification(subject, htmlBody) {
+  // Always fetch the live recipients list from GitHub. Falls back to
+  // in-memory if GitHub is unreachable so we don't lose notifications.
+  const remote = await fetchRemoteEmailsList();
+  if (remote) emailsList = remote;
   if (emailsList.length === 0) return;
   await sendEmailViaGmail(emailsList.map(e => e.email).join(', '), subject, htmlBody);
 }
@@ -408,26 +445,56 @@ app.delete('/api/articles/:slug', requireAuth, async (req, res) => {
 });
 
 // --- Email management ---
-app.get('/api/emails', requireAuth, (req, res) => res.json(emailsList));
+// GET refreshes from GitHub so the UI always reflects the source of truth,
+// even when other Cloud Run instances handled previous edits.
+app.get('/api/emails', requireAuth, async (req, res) => {
+  const remote = await fetchRemoteEmailsList();
+  if (remote) emailsList = remote;
+  res.json(emailsList);
+});
 
-app.post('/api/emails', requireAuth, (req, res) => {
+app.post('/api/emails', requireAuth, async (req, res) => {
   const { email, name } = req.body;
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'Invalid email.' });
+
+  // Reload latest list from GitHub before mutating to avoid clobbering
+  // adds from another instance.
+  const remote = await fetchRemoteEmailsList();
+  if (remote) emailsList = remote;
+
   if (emailsList.some(e => e.email === email)) return res.status(400).json({ error: 'Email already added.' });
-  emailsList.push({ email, name: name || '', addedAt: new Date().toISOString() });
-  persistConfig();
+  const newEntry = { email, name: name || '', addedAt: new Date().toISOString() };
+  emailsList.push(newEntry);
+
+  const result = await persistConfig();
+  if (!result.ok) {
+    emailsList.pop(); // roll back in-memory change so we stay consistent with GitHub
+    return res.status(500).json({ error: `Could not save: ${result.error}` });
+  }
   res.json({ success: true, emails: emailsList });
 });
 
-app.delete('/api/emails/:email', requireAuth, (req, res) => {
-  emailsList = emailsList.filter(e => e.email !== decodeURIComponent(req.params.email));
-  persistConfig();
+app.delete('/api/emails/:email', requireAuth, async (req, res) => {
+  const target = decodeURIComponent(req.params.email);
+  const remote = await fetchRemoteEmailsList();
+  if (remote) emailsList = remote;
+
+  const before = emailsList;
+  emailsList = emailsList.filter(e => e.email !== target);
+
+  const result = await persistConfig();
+  if (!result.ok) {
+    emailsList = before; // roll back
+    return res.status(500).json({ error: `Could not save: ${result.error}` });
+  }
   res.json({ success: true, emails: emailsList });
 });
 
 // --- Config management ---
-app.get('/api/config', requireAuth, (req, res) => {
+app.get('/api/config', requireAuth, async (req, res) => {
   const saKey = loadServiceAccountKey();
+  const remote = await fetchRemoteAdminConfig();
+  if (remote) adminConfig = remote;
   res.json({
     senderEmail: adminConfig.senderEmail || '',
     serviceAccountConfigured: !!saKey,
@@ -436,9 +503,22 @@ app.get('/api/config', requireAuth, (req, res) => {
   });
 });
 
-app.put('/api/config', requireAuth, (req, res) => {
+app.put('/api/config', requireAuth, async (req, res) => {
+  // Sync from GitHub first so a sender-email save doesn't overwrite another
+  // instance's recipient-list edits when persistConfig writes both files.
+  const remoteEmails = await fetchRemoteEmailsList();
+  if (remoteEmails) emailsList = remoteEmails;
+  const remoteConfig = await fetchRemoteAdminConfig();
+  if (remoteConfig) adminConfig = remoteConfig;
+
+  const before = { ...adminConfig };
   if (req.body.senderEmail !== undefined) adminConfig.senderEmail = req.body.senderEmail;
-  persistConfig();
+
+  const result = await persistConfig();
+  if (!result.ok) {
+    adminConfig = before;
+    return res.status(500).json({ error: `Could not save: ${result.error}` });
+  }
   res.json({ success: true, config: adminConfig });
 });
 
@@ -473,6 +553,11 @@ const WEBHOOK_SECRET = crypto.createHash('sha256').update('webhook-' + ADMIN_PAS
 app.post('/api/webhook/deployed', async (req, res) => {
   const { secret, commitMessage } = req.body || {};
   if (secret !== WEBHOOK_SECRET) return res.status(403).json({ error: 'Forbidden' });
+
+  // Always pull the latest recipients straight from GitHub so deploy
+  // notifications match what the user just configured in the UI.
+  const remote = await fetchRemoteEmailsList();
+  if (remote) emailsList = remote;
 
   if (emailsList.length === 0) return res.json({ success: true, message: 'No recipients configured' });
 
